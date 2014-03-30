@@ -1,15 +1,17 @@
 module Main where
 
+import System.Environment
+
 fac :: (Integral n) => n -> n
 fac 0 = 1
 fac n = n * fac(n-1)
 
-readInt :: IO Int
-readInt = readLn
+readInt = do (x:[]) <- getArgs
+             return (read x::Int)
 
 main :: IO ()
-main = do x <- readInt
-          putStrLn $ "Factorial of " ++ (show x) ++ " is " ++ (show (fac x))
+main = do n <- readInt
+          putStrLn $ "Factorial of " ++ (show n) ++ " is " ++ (show (fac n))
 
 
 
