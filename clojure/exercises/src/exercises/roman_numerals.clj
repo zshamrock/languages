@@ -4,9 +4,10 @@
 (defvar- max-supported-decimal 3999)
 
 (defvar- roman-numerals-sets
-    [{:1 "I" :5 "V" :10 "X"} {:1 "X" :5 "L" :10 "C"} {:1 "C" :5 "D" :10 "M"}]
+    [{:1 "I" :5 "V" :10 "X"} {:1 "X" :5 "L" :10 "C"} {:1 "C" :5 "D" :10 "M"} {:1 "M"}]
     "Array of roman numerals per decimal position in the number, i.e. 1-10 (1st), 10-100 (2nd), 100-1000 (3rd).
-    Each of the set has its own represtation of 1, 5 and 10 based on the decimal position.")
+    Each of the set has its own represtation of 1, 5 and 10 based on the decimal position.
+    The last map in array contains only :1, because there are no roman numerals for numbers higher 3999 (actually there are, but it is a different story)")
 
 (defn to 
     "Convert decimal number into roman representation. Supported numbers are from 1 till 3999 inclusive."
