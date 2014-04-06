@@ -54,3 +54,6 @@ Try to:
 Understand what features the language provides to support concurrency.
 
 ### 10. Memory management, recursion implication.
+
+### 11. Building simple web application.
+Can convert *factorial of N* into web application, where the value of n comes from web request param.
