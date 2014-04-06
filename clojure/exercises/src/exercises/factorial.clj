@@ -4,9 +4,8 @@
 (defn fac 
     "Calculate factorial of N"
     [n]
-    (cond
-        (= 0 n) 1
-        :else (* n (fac (dec n)))))
+    (if (= 0 n) 1
+                (* n (fac (dec n)))))
 
 (defn factorial-from-0-till-n-with-merge 
     "Produce seq of factorial in the range from 1 till n using 'apply merge'"
