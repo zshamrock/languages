@@ -42,6 +42,8 @@
   (defvar- decimals (map #({"I" 1 "V" 5 "X" 10 "L" 50 "C" 100 "D" 500 "M" 1000} (str %1)) roman-literal))
   (let [decimal (atom 0)
         cnt (count decimals)
+        ; 0 is added as the last element to decimals as a terminator, so no need check if i+1 element exists, 
+        ; because we iterate till original decimals count
         decimals-with-terminator (conj (vec decimals) 0)]
     (loop [i 0]
       (when (not= i cnt)
