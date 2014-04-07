@@ -57,3 +57,6 @@ Understand what features the language provides to support concurrency.
 
 ### 11. Building simple web application.
 Can convert *factorial of N* into web application, where the value of n comes from web request param.
+
+### 12. Deploying the library
+Find the way how the libraries are shared and how you can publish your library to be available for others.
