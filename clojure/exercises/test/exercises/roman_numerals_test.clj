@@ -20,4 +20,14 @@
     (testing "max supported decimal 3999"
         (is (= "MMMCMXCIX" (roman/to 3999)))))
 
+(deftest from-roman-to-decimals-test
+  (testing "MMMCMXCIX -> 3999"
+    (is (= 3999 (roman/from "MMMCMXCIX")))))
 
+(deftest to-roman-and-back-to-decimals-test
+  (testing "to 2014 and back"
+    (is (= 2014 (roman/from (roman/to 2014))))))
+
+(deftest from-I-to-X-test
+  (testing "from I to X"
+    (is (= (irange 1 10) (vec (map roman/from ["I" "II" "III" "IV" "V" "VI" "VII" "VIII" "IX" "X"]))))))
