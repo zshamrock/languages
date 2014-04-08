@@ -47,13 +47,13 @@
         decimals-with-terminator (conj (vec decimals) 0)]
     (loop [i 0]
       (when (not= i cnt)
-        (let [current-i (decimals-with-terminator i) 
-              next-i (decimals-with-terminator (inc i))
-              substract-rule (< current-i next-i)] 
+        (let [current-decimal (decimals-with-terminator i) 
+              next-decimal (decimals-with-terminator (inc i))
+              substract-rule (< current-decimal next-decimal)] 
           (swap! decimal +
             (if substract-rule
-              (- next-i current-i) 
-              current-i))
+              (- next-decimal current-decimal) 
+              current-decimal))
           (recur (if substract-rule (+ i 2) (inc i))))
         )) 
     @decimal
