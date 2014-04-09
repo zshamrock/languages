@@ -1,14 +1,9 @@
-# roman-literals-web
+### Work in progress
+I know that there is a lein ring plugin, but better try to do everything how it is supposed to be, 
+before using some high level plugin.
 
-A Clojure library designed to ... well, that part is up to you.
+So, there are steps (based from https://github.com/ring-clojure/ring/wiki/Getting-Started) how to run the app:
 
-## Usage
-
-FIXME
-
-## License
-
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+    => (use 'ring.adapter.jetty)
+    => (use 'hello-world.core)
+    => (run-jetty handler {:port 3000})
