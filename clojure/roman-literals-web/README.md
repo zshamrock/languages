@@ -5,5 +5,5 @@ before using some high level plugin.
 So, there are steps (based from https://github.com/ring-clojure/ring/wiki/Getting-Started) how to run the app:
 
     => (use 'ring.adapter.jetty)
-    => (use 'hello-world.core)
+    => (use 'roman-literals-web.core)
     => (run-jetty handler {:port 3000})
