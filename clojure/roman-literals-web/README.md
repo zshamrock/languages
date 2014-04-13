@@ -7,3 +7,5 @@ So, there are steps (based from https://github.com/ring-clojure/ring/wiki/Gettin
     => (use 'ring.adapter.jetty)
     => (use 'roman-literals-web.core)
     => (run-jetty handler {:port 3000})
+
+To build `public/js/main.js`, run `lein cljsbuild once`.     
