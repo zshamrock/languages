@@ -3,5 +3,9 @@
     <body>
         Serving static file?
         <script type="text/javascript" src="js/main.js"></script>
+        <script>
+            goog.require('roman_literals_web.roman_literals_app');
+            alert(roman_literals_web.roman_literals_app.greet('ClojureScript'));
+        </script>
     </body>
 </html>

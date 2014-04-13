@@ -5,7 +5,10 @@
 (defn handler [request]
   (println (path-info request))
   (cond
-    (in-context? request "/js/") (file-response (path-info request) {:root "public"})
+    (in-context? request "/js/") 
+      (-> 
+        (file-response (path-info request) {:root "public"})
+        (content-type "application/javascript"))
     :else 
       (-> 
         (file-response "index.html" {:root "public"})
