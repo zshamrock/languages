@@ -10,7 +10,6 @@
     (-> (response-util/file-response file {:root "public"})
         (response-util/content-type content-type))))
 
-
 (defn handler [request]
   (println (request-util/path-info request))
   (cond
