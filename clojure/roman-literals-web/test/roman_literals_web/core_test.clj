@@ -15,8 +15,6 @@
 
 (deftest handler-test
   (testing "serving index.html"
-      (with-redefs [res-util/file-response (fn [f & [opts]] {:body f :status 200 :headers {}})]
-        (let [r (core/handler (get-request "/"))]
-          (println r)
-          (is (= "index.html" (r :body)))
-          (is (= "text/html" (-> r :headers (get "Content-Type"))))))))
+    (let [r (core/handler (get-request "/"))]
+      (is (= "index.html" (-> r :body .getName)))
+      (is (= "text/html" (-> r :headers (get "Content-Type")))))))
