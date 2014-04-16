@@ -4,13 +4,19 @@
             [ring.util.request :as req-util :refer :all]
             [ring.util.response :as res-util :refer :all]))
 
+(defn- get-request [uri]
+  {:server-port 3000 
+   :server-name "localhost" 
+   :remote-addr "127.0.0.1"
+   :uri uri
+   :scheme :http
+   :request-method :get
+   :headers {}})
+
 (deftest handler-test
   (testing "serving index.html"
-    (let [response-file (atom nil) content-type (atom nil)]
-      (with-redefs [req-util/in-context? (fn [request context] false)
-                    req-util/path-info (fn [request] "index.html")
-                    res-util/file-response (fn [file & [opts]] (reset! response-file file))
-                    res-util/content-type (fn [response t] (reset! content-type t))]
-        (core/handler {})
-        (is (= "index.html" @response-file))
-        (is (= "text/html" @content-type))))))
+      (with-redefs [res-util/file-response (fn [f & [opts]] {:body f :status 200 :headers {}})]
+        (let [r (core/handler (get-request "/"))]
+          (println r)
+          (is (= "index.html" (r :body)))
+          (is (= "text/html" (-> r :headers (get "Content-Type"))))))))
