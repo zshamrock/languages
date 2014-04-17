@@ -14,5 +14,7 @@
   (cond
     (request-util/in-context? request "/js/") 
       (static-response (request-util/path-info request) "application/javascript")
+    (= (request-util/path-info request) "/")  
+      (static-response "index.html")
     :else 
-      (static-response "index.html")))
+      (response-util/not-found "")))
