@@ -4,6 +4,9 @@
             [ring.util.request :as req-util :refer :all]
             [ring.util.response :as res-util :refer :all]))
 
+(defn- path-with-prefix [path]
+  (str "public/" path))
+
 (defn- get-request [uri]
   {:server-port 3000 
    :server-name "localhost" 
@@ -13,8 +16,18 @@
    :request-method :get
    :headers {}})
 
+(defn- verify [uri {:keys [expected-path expected-content-type]}]
+  (let [r (core/handler (get-request uri)) 
+        actual-path (-> r :body .getPath)
+        actual-content-type (-> r :headers (get "Content-Type"))]
+    (is (= expected-path actual-path))
+    (is (= expected-content-type actual-content-type))))
+
 (deftest handler-test
   (testing "serving index.html"
-    (let [r (core/handler (get-request "/"))]
-      (is (= "index.html" (-> r :body .getName)))
-      (is (= "text/html" (-> r :headers (get "Content-Type")))))))
+    (verify "/" {:expected-path (path-with-prefix "index.html")
+                 :expected-content-type "text/html"}))
+
+  (testing "serving js file"
+    (verify "/js/main.js" {:expected-path (path-with-prefix "js/main.js")
+                           :expected-content-type "application/javascript"})))
