@@ -10,12 +10,34 @@
   (partition 3 (for [x (range 0 3) y (range 0 3)] [y x])))
 
 (defn diagonals []
-  (partition 3 (concat (for [x (range 0 3)] [x x]) (for [x (range 0 3)] [x (- 2 x)]))))
+  (partition 3 (concat 
+                 (for [x (range 0 3)] [x x])
+                 (for [x (range 0 3)] [x (- 2 x)]))))
 
 (defn possible-win-positions []
   (concat (all-rows) (all-cols) (diagonals)))
 
-(defn analyze [board]
+(defn analyze-2nd-impl [board]
+  (let [winner (fn [line]
+                 (cond 
+                   (= ":x:x:x" line)
+                   :x
+
+                   (= ":o:o:o" line)
+                   :o
+
+                   :else 
+                   nil))]
+    (loop [win-positions (possible-win-positions)]
+      (let [win-position (first win-positions)
+            line (apply str (map (fn [[x y]] ((board x) y)) win-position))
+            found-winner (winner line)]
+        (if (not (nil? found-winner))
+          found-winner
+          (when (next win-positions)
+            (recur (next win-positions))))))))
+
+(defn analyze-original-impl [board]
   (let [winner (fn [lines]
                  (cond 
                    (some #{":x:x:x"} lines)
@@ -45,6 +67,9 @@
         found-winner
         ; else diagonals
         (winner (as-lines (for [x (range 0 3)] [((board x) x) ((board x) (- 2 x))])))))))
+
+(defn analyze [board]
+  (analyze-2nd-impl board))
 
 (defn- run-all-tests []
   (is (= nil (analyze [[:e :e :e]
