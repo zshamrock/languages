@@ -3,6 +3,18 @@
 
 (require '[clojure.test :refer [is]])
 
+(defn all-rows []
+  (partition 3 (for [x (range 0 3) y (range 0 3)] [x y])))
+
+(defn all-cols []
+  (partition 3 (for [x (range 0 3) y (range 0 3)] [y x])))
+
+(defn diagonals []
+  (partition 3 (concat (for [x (range 0 3)] [x x]) (for [x (range 0 3)] [x (- 2 x)]))))
+
+(defn possible-win-positions []
+  (concat (all-rows) (all-cols) (diagonals)))
+
 (defn analyze [board]
   (let [winner (fn [lines]
                  (cond 
