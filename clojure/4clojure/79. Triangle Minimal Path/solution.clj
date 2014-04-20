@@ -3,9 +3,16 @@
 
 (require '[clojure.test :refer [is]])
 
+; the idea is start from the bottom of the triangle, and reduce each level by all possible path weights
 (defn triangle-min-path [triangle]
-  0
-  )
+  (let [reverse-triangle (reverse triangle)]
+    (loop [path (map list (first reverse-triangle))
+           smaller-triangle (next reverse-triangle)]
+      (if (seq smaller-triangle)
+        (recur 
+          (map-indexed #(map (partial + %2) (concat (nth path %1) (nth path (inc %1)))) (first smaller-triangle))
+          (next smaller-triangle))
+        (apply min (first path))))))
 
 (defn- run-all-tests []
   (is (= 7 (triangle-min-path 
