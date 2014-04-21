@@ -1,10 +1,18 @@
 ; 79. Triangle Minimal Path
 ; https://www.4clojure.com/problem/79
 
+; TODO: See if reduce can be used.
 (require '[clojure.test :refer [is]])
 
+(defn triangle-min-path-2nd-impl [triangle]
+  (apply min (first
+               (reduce (fn [path row]
+                         (map-indexed #(map (partial + %2) (concat (nth path %1) (nth path (inc %1)))) row)) 
+                       (repeat ((comp inc count) (last triangle)) [0]) 
+                       (reverse triangle)))))
+
 ; the idea is start from the bottom of the triangle, and reduce each level by all possible path weights
-(defn triangle-min-path [triangle]
+(defn triangle-min-path-original-impl [triangle]
   (let [reverse-triangle (reverse triangle)]
     (loop [path (map list (first reverse-triangle))
            smaller-triangle (next reverse-triangle)]
@@ -13,6 +21,9 @@
           (map-indexed #(map (partial + %2) (concat (nth path %1) (nth path (inc %1)))) (first smaller-triangle))
           (next smaller-triangle))
         (apply min (first path))))))
+
+(defn triangle-min-path [triangle]
+  (triangle-min-path-2nd-impl triangle))
 
 (defn- run-all-tests []
   (is (= 7 (triangle-min-path 
