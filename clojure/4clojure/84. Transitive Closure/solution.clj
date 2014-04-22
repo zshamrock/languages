@@ -3,8 +3,17 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn transitive-closure [pairs]
-  #{})
+(defn transitive-closure [pairs-set]
+  (let [pairs-map (into {} pairs-set)]
+    (into #{} 
+          (apply concat
+                 (for [pair pairs-map]
+                   (loop [a (key pair) b (val pair) visited #{b} result [[a b]]]
+                     (let [c (get pairs-map b)]
+                       (if (and c (not (contains? visited c)))
+                         (recur a c (conj visited c) (conj result [a c]))
+                         result))))))))
+
   
 (defn- run-all-tests []
   (let [divides #{[8 4] [9 3] [4 2] [27 9]}]
