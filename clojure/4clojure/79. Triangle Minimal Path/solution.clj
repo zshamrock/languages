@@ -1,7 +1,6 @@
 ; 79. Triangle Minimal Path
 ; https://www.4clojure.com/problem/79
 
-; TODO: See if reduce can be used.
 (require '[clojure.test :refer [is]])
 
 (defn triangle-min-path-2nd-impl [triangle]
