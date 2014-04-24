@@ -14,22 +14,23 @@
                       [/] ; only halve if not doubled and even
                       [])
                     ))
-          (next-values [values]
+          (next-values [values saw]
             (into {} 
                   (apply concat (for [[value ops] values]
                                   (map 
                                     (fn [op] 
                                       (let [next-value (op value 2)]
-                                        [next-value (operations-set next-value op)])) ops)))))]    
+                                        (when (not (contains? saw next-value))
+                                          [next-value (operations-set next-value op)]))) ops)))))]    
 
     (loop [values {start (operations-set start :none)} 
            saw #{start}
            length 1]
       (if (contains? saw end)
         length
-        (let [new-values (next-values values)]
+        (let [new-values (next-values values saw)]
           (recur new-values 
-                 (into saw (vals new-values)) 
+                 (into saw (keys new-values)) 
                  (inc length))
           )))))
 
