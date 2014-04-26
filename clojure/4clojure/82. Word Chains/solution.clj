@@ -3,6 +3,15 @@
 
 (require '[clojure.test :refer [is]])
 
+(defn chainable? [a b]
+  nil)
+
+(defn- chainable?-test []
+  (is (= true (chainable? "hat" "hot")))
+  (is (= true (chainable? "cot" "coat")))
+  (is (= true (chainable? "coat" "cot")))
+  (is (= false (chainable? "cot" "pos"))))
+
 (defn word-chain? [ch]
   nil)
 
