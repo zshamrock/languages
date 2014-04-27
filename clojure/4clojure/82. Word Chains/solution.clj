@@ -3,13 +3,28 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn chainable? [a b]
-  nil)
+(defn chainable? [a b]  
+  (let [[x y] (if (>= (count a) (count b)) [a b] [b a])] ; x is always the longest (or the same length) word, y the shortest
+    (if (= (count x) (count y))
+      (= 1 
+         (loop [w1 x w2 y diff 0]
+           (if (seq w1)          
+             (recur (rest w1) (rest w2) (if (not= (first w1) (first w2)) (inc diff) diff))
+             diff)))
+
+      (loop [i 0]
+        (let [reduced-x (str (subs x 0 i) (subs x (inc i)))]
+          (if (= reduced-x y)
+            true
+            (if (not= i (dec (count x)))
+              (recur (inc i))
+              false)))))))
 
 (defn- chainable?-test []
   (is (= true (chainable? "hat" "hot")))
   (is (= true (chainable? "cot" "coat")))
   (is (= true (chainable? "coat" "cot")))
+  (is (= false (chainable? "cot" "animal")))
   (is (= false (chainable? "cot" "pos"))))
 
 (defn word-chain? [ch]
