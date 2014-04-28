@@ -3,7 +3,7 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn chainable? [a b]  
+(defn- chainable? [a b]  
   (let [[x y] (if (>= (count a) (count b)) [a b] [b a])] ; x is always the longest (or the same length) word, y the shortest
     (if (= (count x) (count y))
       (= 1 
@@ -13,12 +13,17 @@
              diff)))
 
       (loop [i 0]
-        (let [reduced-x (str (subs x 0 i) (subs x (inc i)))]
-          (if (= reduced-x y)
+        (let [one-char-deleted-x (str (subs x 0 i) (subs x (inc i)))]
+          (if (= one-char-deleted-x y)
             true
             (if (not= i (dec (count x)))
               (recur (inc i))
               false)))))))
+
+(defn- all-possible-chainable-words [chain]
+  (into {} (for [word chain]
+             (let [chainable (filter #(and (not= word %) (chainable? word %)) chain)]
+               [word chainable]))))
 
 (defn- chainable?-test []
   (is (= true (chainable? "hat" "hot")))
@@ -31,7 +36,7 @@
   nil)
 
 (defn- run-all-tests []
-  (is (= true (word-chain? #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"})))
+  (is (= true (all-possible-chainable-words #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"})))
   (is (= false (word-chain? #{"cot" "hot" "bat" "fat"})))
   (is (= false (word-chain? #{"to" "top" "stop" "tops" "toss"})))
   (is (= true (word-chain? #{"spout" "do" "pot" "pout" "spot" "dot"})))
