@@ -47,11 +47,9 @@
                         (recur (next possible-next-words-in-chain))
                         false))))))]
       (loop [words chain]
-        (if (seq words)
-          (if (try-to-solve [(first words)] #{(first words)})
-            true
-            (recur (next words)))
-          false)))))
+        (when (seq words)
+          (or (try-to-solve [(first words)] #{(first words)}) (recur (next words))))))))
+            
         
 
 (defn- run-all-tests []
