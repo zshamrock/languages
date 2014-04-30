@@ -37,23 +37,25 @@
     (letfn [
             (try-to-solve [chain-so-far used-words]
               (if (= used-words chain) 
-                true
+                (do
+                  (println "solution:" chain-so-far)
+                  true)
                 (let [last-word (last chain-so-far)]
                   (loop [possible-next-words-in-chain (get chainable-words last-word)]
                     (if-let [next-word (first possible-next-words-in-chain)] 
-                      (when-not (contains? used-words next-word)
-                        (try-to-solve (conj chain-so-far next-word) (conj used-words next-word)))
-                      (if (next possible-next-words-in-chain)
-                        (recur (next possible-next-words-in-chain))
-                        false))))))]
+                      (if-not (contains? used-words next-word)
+                        (or (try-to-solve (conj chain-so-far next-word) (conj used-words next-word)) (recur (next possible-next-words-in-chain)))
+                        (if (next possible-next-words-in-chain)
+                          (recur (next possible-next-words-in-chain))
+                          false))
+                      false)))))]
       (loop [words chain]
-        (when (seq words)
-          (or (try-to-solve [(first words)] #{(first words)}) (recur (next words))))))))
-            
-        
+        (if (seq words)
+          (or (try-to-solve [(first words)] #{(first words)}) (recur (next words)))
+          false)))))
 
 (defn- run-all-tests []
-  (is (= true (all-possible-chainable-words #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"})))
+  (is (= true (word-chain? #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"})))
   (is (= false (word-chain? #{"cot" "hot" "bat" "fat"})))
   (is (= false (word-chain? #{"to" "top" "stop" "tops" "toss"})))
   (is (= true (word-chain? #{"spout" "do" "pot" "pout" "spot" "dot"})))
