@@ -42,16 +42,15 @@
                   true)
                 (let [last-word (last chain-so-far)]
                   (loop [possible-next-words-in-chain (get chainable-words last-word)]
-                    (if-let [next-word (first possible-next-words-in-chain)] 
+                    (when-let [next-word (first possible-next-words-in-chain)] 
                       (if-not (contains? used-words next-word)
-                        (or (try-to-solve (conj chain-so-far next-word) (conj used-words next-word)) (recur (next possible-next-words-in-chain)))
-                        (if (next possible-next-words-in-chain)
-                          (recur (next possible-next-words-in-chain))
-                          false))
-                      false)))))]
+                        (or (try-to-solve (conj chain-so-far next-word) (conj used-words next-word)) 
+                            (recur (next possible-next-words-in-chain)))
+                        (recur (next possible-next-words-in-chain))))))))]
       (loop [words chain]
-        (if (seq words)
-          (or (try-to-solve [(first words)] #{(first words)}) (recur (next words)))
+        (if-let [word (first words)]
+          (or (try-to-solve [word] #{word}) 
+              (recur (next words)))
           false)))))
 
 (defn- run-all-tests []
