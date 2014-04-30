@@ -7,9 +7,9 @@
   (let [[x y] (if (>= (count a) (count b)) [a b] [b a])] ; x is always the longest (or the same length) word, y the shortest
     (if (= (count x) (count y))
       (= 1 
-         (loop [w1 x w2 y diff 0]
-           (if (seq w1)          
-             (recur (rest w1) (rest w2) (if (not= (first w1) (first w2)) (inc diff) diff))
+         (loop [smaller-x x smaller-y y diff 0]
+           (if (seq smaller-x)          
+             (recur (rest smaller-x) (rest smaller-y) (if (not= (first smaller-x) (first smaller-y)) (inc diff) diff))
              diff)))
 
       (loop [i 0]
