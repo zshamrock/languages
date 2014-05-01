@@ -3,6 +3,32 @@
 
 (require '[clojure.test :refer [is]])
 
+(defn- latin-square? [square] ; square is a seq where each n elements represent a row
+  (let [n (int (Math/sqrt (count square)))]
+    (letfn [
+            (rows [square]
+              (partition n square))
+
+            (cols [square] 
+              (loop [i 0 sq square cols []] ; get square cols
+                (if-not (= i n)
+                  (recur (inc i) (next sq) (conj cols (take-nth n sq)))
+                  cols)))
+
+            (unique-all? [cols-or-rows]
+              (= (* n n) (reduce + (map (comp count distinct) cols-or-rows))))]
+      (and 
+        (unique-all? (rows square))
+        (unique-all? (cols square)))))) 
+
+(defn- latin-square?-tests []
+  (is (latin-square? '[A B C B C A C A B]))
+  (is (not (latin-square? '[A B C B C A C A C])))
+  (is (latin-square? [1 2 2 1]))
+  (is (not (latin-square? [1 2 1 2]))))
+
+(latin-square?-tests)
+
 (defn latin-squares [v]
   {})
 
