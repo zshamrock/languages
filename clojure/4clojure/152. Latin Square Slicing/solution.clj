@@ -42,6 +42,18 @@
 
 (shift-row-test)
 
+(defn- normalize 
+  "Normalize vector V means expand all rows smaller than maximal length filling the rest with 'X."
+  [v]
+  (let [max-length (apply max (map count v))
+        rows (count v)
+        ]
+    (for [i (range rows)]
+      (let [row (nth v i)]
+        (concat row (repeat (- max-length (count row)) 'X))))))
+
+(= [[1 2 'X 'X] [1 2 3 4] ['X 'X 'X 'X] [1 'X 'X 'X]] (normalize [[1 2] [1 2 3 4] [] [1]]))
+
 (defn- next-shifted-square 
   "Returns the next shifted square or nil otherwise. square arg is an seq of seqs."
   [square]
