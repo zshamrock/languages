@@ -4,7 +4,7 @@
 (require '[clojure.test :refer [is]])
 
 (defn- latin-square? [square] ; square is a seq where each n elements (of total n*n) represent a row
-  (let [n (int (Math/sqrt (count square)))
+  (let [n (-> square count Math/sqrt int)
         cols (partition n square)
         rows (apply map list cols)]
     (letfn [
