@@ -22,6 +22,33 @@
 
 (latin-square?-tests)
 
+(defn- shift-row 
+  "Shift row to the right, the holes are marked with 'X where elements can be placed."
+  [row]
+  (when (= 'X (last row)) ; so there is a space to shift
+    (let [n (count row)
+          spaces-in-front (count (take-while #{'X} row))
+          elements (take-while #(not= 'X %) (drop spaces-in-front row))]
+      (concat (repeat (inc spaces-in-front) 'X) elements (repeat (- n spaces-in-front (count elements) 1) 'X)))))
+
+(defn- shift-row-test []
+  (is (= '[X X X A B C X] (shift-row '[X X A B C X X])))
+  (is (= '[X X X X A B C] (shift-row '[X X X A B C X])))
+  (is (= nil (shift-row '[X X X A B C ])))
+  (is (= '[X A B C] (shift-row '[A B C X])))
+  (is (= nil (shift-row '[A B C])))
+  (is (= nil (shift-row '[])))
+)
+
+(shift-row-test)
+
+(defn- next-shifted-square 
+  "Returns the next shifted square or nil otherwise. square arg is an seq of seqs."
+  [square]
+  (let [n (apply max (map count square))])
+  nil
+  )
+
 (defn latin-squares [v]
   {})
 
