@@ -53,18 +53,22 @@
         (concat row (repeat (- max-length (count row)) 'X))))))
 
 (= [[1 2 'X 'X] [1 2 3 4] ['X 'X 'X 'X] [1 'X 'X 'X]] (normalize [[1 2] [1 2 3 4] [] [1]]))
+(all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 2)
+(all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 3)
+(all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 4)
 
 (defn- all-sub-squares 
   "Return all sub squares given dimension. v is a normalized version of the original V."
   [v dimension]
-    (let [width (count (first v)) 
-          height (count v)]
-      (for [x (range (inc (- width dimension))) ; range end is exclusive, but we need the end to be inclusive, so there is inc for it
-            y (range (inc (- height dimension)))]
-          (loop [i 0 square []]
-            (if-not (= i dimension)
-              (let [row (take dimension (drop y (nth v (+ i x))))] 
-                (recur (inc i) (concat square row))))))))
+  (let [width (count (first v)) 
+        height (count v)]
+    (for [x (range (inc (- width dimension))) ; range end is exclusive, but we need the end to be inclusive, so there is inc for it
+          y (range (inc (- height dimension)))]
+      (loop [i 0 square []]
+        (if-not (= i dimension)
+          (let [row (take dimension (drop y (nth v (+ i x))))] 
+            (recur (inc i) (concat square row)))
+          square)))))
 
 (defn- next-shifted-square 
   "Returns the next shifted square or nil otherwise. square arg is an seq of seqs."
