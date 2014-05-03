@@ -53,9 +53,6 @@
         (concat row (repeat (- max-length (count row)) 'X))))))
 
 (= [[1 2 'X 'X] [1 2 3 4] ['X 'X 'X 'X] [1 'X 'X 'X]] (normalize [[1 2] [1 2 3 4] [] [1]]))
-(all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 2)
-(all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 3)
-(all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 4)
 
 (defn- all-sub-squares 
   "Return all sub squares given dimension. v is a normalized version of the original V."
@@ -69,6 +66,18 @@
           (let [row (take dimension (drop y (nth v (+ i x))))] 
             (recur (inc i) (concat square row)))
           square)))))
+
+(defn- all-sub-squares-test []
+  (is (= '((1 2 1 2) (2 X 2 3) (X X 3 4) (1 2 X X) (2 3 X X) (3 4 X X) (X X 1 X) (X X X X) (X X X X)) 
+         (all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 2)))
+
+  (is (= '((1 2 X 1 2 3 X X X) (2 X X 2 3 4 X X X) (1 2 3 X X X 1 X X) (2 3 4 X X X X X X))
+         (all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 3)))
+
+  (is (= '((1 2 X X 1 2 3 4 X X X X 1 X X X))
+         (all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 4)))) 
+
+(all-sub-squares-test)
 
 (defn- next-shifted-square 
   "Returns the next shifted square or nil otherwise. square arg is an seq of seqs."
