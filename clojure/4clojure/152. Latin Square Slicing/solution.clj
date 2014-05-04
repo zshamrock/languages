@@ -80,13 +80,35 @@
 (all-sub-squares-test)
 
 (defn- next-shifted-square 
-  "Returns the next shifted square or nil otherwise. square arg is an seq of seqs."
+  "Returns the next shifted square or nil otherwise. square arg is an vec of vecs."
   [square]
-  (let [n (apply max (map count square))])
-  nil
-  )
+  (let [size (count square)]
+    (loop [i 0 shifted-square []]
+      (let [row (nth square i)]
+        (if-let [shifted-row (shift-row row)]
+          (let [square-head (conj shifted-square (vec shifted-row))
+                square-rest (nthrest square (inc i))]
+            (if (seq square-rest)
+              (into square-head square-rest)
+              square-head))
+          (when-not (= (inc i) size)
+            (recur (inc i) (conj shifted-square row))))))))
+
+(defn- next-shifted-square-test []
+  (is (= '[[X A B] [X A B] [A B C]] (next-shifted-square '[[A B X] [X A B] [A B C]])))
+
+  (is (= '[[A B C] [X X A] [A B C]] (next-shifted-square '[[A B C] [X A X] [A B C]])))
+  
+  (is (= '[[A B C] [X A B] [X A X]] (next-shifted-square '[[A B C] [X A B] [A X X]])))
+  
+  (is (= nil (next-shifted-square '[[A B C] [X A B] [A B C]]))))
+
+(next-shifted-square-test)
 
 (defn latin-squares [v]
+  (let [vv (normalized v)]
+    
+    )
   {})
 
 (defn- run-all-tests []
