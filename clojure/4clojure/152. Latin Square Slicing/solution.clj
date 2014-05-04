@@ -5,11 +5,11 @@
 
 (defn- latin-square? [square] ; square is a seq where each n elements (of total n*n) represent a row
   (let [n (-> square count Math/sqrt int)
-        cols (partition n square)
-        rows (apply map list cols)]
+        rows (partition n square)
+        cols (apply map list rows)]
     (letfn [
-            (unique-all? [cols-or-rows]
-              (= (* n n) (reduce + (map (comp count distinct) cols-or-rows))))]
+            (unique-all? [rows-or-cols]
+              (= (* n n) (reduce + (map (comp count distinct) rows-or-cols))))]
       (and 
         (unique-all? rows)
         (unique-all? cols)))))
