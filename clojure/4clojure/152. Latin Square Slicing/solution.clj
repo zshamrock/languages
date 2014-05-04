@@ -5,20 +5,24 @@
 
 (defn- latin-square? [square] ; square is a seq where each n elements (of total n*n) represent a row
   (let [n (-> square count Math/sqrt int)
-        rows (partition n square)
-        cols (apply map list rows)]
-    (letfn [
-            (unique-all? [rows-or-cols]
-              (= (* n n) (reduce + (map (comp count distinct) rows-or-cols))))]
-      (and 
-        (unique-all? rows)
-        (unique-all? cols)))))
+        distinct-elements (distinct square)]
+    (if (= n (count distinct-elements)) ; satisfies one of the definition of latin square, so could be the one
+      (let [rows (partition n square)
+            cols (apply map list rows)] 
+        (letfn [
+                (unique-all? [rows-or-cols]
+                  (= (* n n) (reduce + (map (comp count distinct) rows-or-cols))))]
+          (and 
+            (unique-all? rows)
+            (unique-all? cols))))
+      false)))
 
 (defn- latin-square?-tests []
   (is (latin-square? '[A B C B C A C A B]))
   (is (not (latin-square? '[A B C B C A C A C])))
   (is (latin-square? [1 2 2 1]))
-  (is (not (latin-square? [1 2 1 2]))))
+  (is (not (latin-square? [1 2 1 2])))
+  (is (not (latin-square? [1 2 3 4]))))
 
 (latin-square?-tests)
 
@@ -106,10 +110,17 @@
 (next-shifted-square-test)
 
 (defn latin-squares [v]
-  (let [vv (normalized v)]
-    
-    )
-  {})
+  (let [vv (normalize v)
+        min-dimension (min (count vv) (count (first vv)))]
+    (loop [next-vv vv squares {}]
+      (if (seq next-vv)
+        (let [latin-squares-per-dimensions 
+              (for [dimension (range 2 (inc min-dimension))]
+                (let [valid-sub-squares (filter #(not (some #{'X} %)) (all-sub-squares next-vv dimension)); valid-sub-squares are actual sub squares without the holes, i.e. 'X symbol 
+                      latin-squares-with-dimension (apply + (map #(if (latin-square? %) 1 0) valid-sub-squares))]
+                  {dimension latin-squares-with-dimension}))]
+          (recur (next-shifted-square next-vv) (apply merge-with + squares latin-squares-per-dimensions)))
+        squares))))
 
 (defn- run-all-tests []
   (is (= (latin-squares '[[A B C D]
