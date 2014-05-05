@@ -33,7 +33,8 @@
     (let [n (count row)
           spaces-in-front (count (take-while #{'X} row))
           elements (take-while #(not= 'X %) (drop spaces-in-front row))]
-      (concat (repeat (inc spaces-in-front) 'X) elements (repeat (- n spaces-in-front (count elements) 1) 'X)))))
+      (when (seq elements)
+        (concat (repeat (inc spaces-in-front) 'X) elements (repeat (- n spaces-in-front (count elements) 1) 'X))))))
 
 (defn- shift-row-test []
   (is (= '[X X X A B C X] (shift-row '[X X A B C X X])))
@@ -42,6 +43,7 @@
   (is (= '[X A B C] (shift-row '[A B C X])))
   (is (= nil (shift-row '[A B C])))
   (is (= nil (shift-row '[])))
+  (is (= nil (shift-row '[X X X X])))
 )
 
 (shift-row-test)
@@ -108,13 +110,18 @@
   
   (is (= '[[A B C] [X A B] [X A X]] (next-shifted-square '[[A B C] [X A B] [A X X]])))
   
-  (is (= nil (next-shifted-square '[[A B C] [X A B] [A B C]]))))
+  (is (= nil (next-shifted-square '[[A B C] [X A B] [A B C]])))
+
+  (is (= nil (next-shifted-square '[[A B C] [X A B] [X X X]])))) 
 
 (next-shifted-square-test)
 
-(all-sub-squares (next-shifted-square (normalize [  [2 4 6 3]
-                          [3 4 6 2]
-                          [6 2 4]  ])) 2)
+(all-sub-squares (next-shifted-square (normalize [[1 1 1 1]
+                                                  [1 2 1 2]
+                                                  [2 1 2 1]
+                                                  [1 2 1 2]
+                                                  []       ])) 2)
+
 ; And yes, still need to check for the duplicated latin squares of the same dimension, probably the last filter before the final solution
 (defn latin-squares [v]
   (let [vv (normalize v)
