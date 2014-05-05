@@ -63,8 +63,8 @@
   [v dimension]
   (let [width (count (first v)) 
         height (count v)]
-    (for [x (range (inc (- width dimension))) ; range end is exclusive, but we need the end to be inclusive, so there is inc for it
-          y (range (inc (- height dimension)))]
+    (for [x (range (inc (- height dimension))) ; range end is exclusive, but we need the end to be inclusive, so there is inc for it
+          y (range (inc (- width dimension)))]
       (loop [i 0 square []]
         (if-not (= i dimension)
           (let [row (take dimension (drop y (nth v (+ i x))))] 
@@ -79,7 +79,10 @@
          (all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 3)))
 
   (is (= '((1 2 X X 1 2 3 4 X X X X 1 X X X))
-         (all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 4)))) 
+         (all-sub-squares '((1 2 X X) (1 2 3 4) (X X X X) (1 X X X)) 4)))
+  
+  (is (= '((1 2 A B) (2 3 B C) (3 4 C D) (A B W X) (B C X Y) (C D Y Z)) 
+         (all-sub-squares '((1 2 3 4) (A B C D) (W X Y Z)) 2)))) 
 
 (all-sub-squares-test)
 
@@ -96,7 +99,7 @@
               (into square-head square-rest)
               square-head))
           (when-not (= (inc i) size)
-            (recur (inc i) (conj shifted-square row))))))))
+            (recur (inc i) (conj shifted-square (vec row)))))))))
 
 (defn- next-shifted-square-test []
   (is (= '[[X A B] [X A B] [A B C]] (next-shifted-square '[[A B X] [X A B] [A B C]])))
@@ -109,6 +112,10 @@
 
 (next-shifted-square-test)
 
+(all-sub-squares (next-shifted-square (normalize [  [2 4 6 3]
+                          [3 4 6 2]
+                          [6 2 4]  ])) 2)
+; And yes, still need to check for the duplicated latin squares of the same dimension, probably the last filter before the final solution
 (defn latin-squares [v]
   (let [vv (normalize v)
         min-dimension (min (count vv) (count (first vv)))]
