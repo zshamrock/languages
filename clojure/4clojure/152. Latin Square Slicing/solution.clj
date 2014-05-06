@@ -134,7 +134,7 @@
                       latin-squares-with-dimension (apply + (map #(if (latin-square? %) 1 0) valid-sub-squares))]
                   {dimension latin-squares-with-dimension}))]
           (recur (next-shifted-square next-vv) (apply merge-with + squares latin-squares-per-dimensions)))
-        squares))))
+        (into {} (filter #(not (zero? (% 1))) squares)))))) ; filter zero values
 
 (defn- run-all-tests []
   (is (= (latin-squares '[[A B C D]
