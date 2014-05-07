@@ -122,19 +122,20 @@
                                                   [1 2 1 2]
                                                   []       ])) 2)
 
-; And yes, still need to check for the duplicated latin squares of the same dimension, probably the last filter before the final solution
 (defn latin-squares [v]
   (let [vv (normalize v)
         min-dimension (min (count vv) (count (first vv)))]
-    (loop [next-vv vv squares {}]
+    (loop [next-vv vv seen-squares #{}]
       (if (seq next-vv)
-        (let [latin-squares-per-dimensions 
+        (let [squares
               (for [dimension (range 2 (inc min-dimension))]
                 (let [valid-sub-squares (filter #(not (some #{'X} %)) (all-sub-squares next-vv dimension)); valid-sub-squares are actual sub squares without the holes, i.e. 'X symbol 
-                      latin-squares-with-dimension (apply + (map #(if (latin-square? %) 1 0) valid-sub-squares))]
-                  {dimension latin-squares-with-dimension}))]
-          (recur (next-shifted-square next-vv) (apply merge-with + squares latin-squares-per-dimensions)))
-        (into {} (filter #(not (zero? (% 1))) squares)))))) ; filter zero values
+                      found-latin-squares (filter latin-square? valid-sub-squares)]
+                  found-latin-squares))]
+          (recur (next-shifted-square next-vv) (into seen-squares (apply concat (filter seq squares))))) ; filter empty seq
+        (let [found-latin-squares-by-size (group-by #(-> % count Math/sqrt int) seen-squares)]
+          (println "seen-squares" seen-squares)
+          (into {} (map (fn [[k v]] (vector k (count v))) found-latin-squares-by-size)))))))
 
 (defn- run-all-tests []
   (is (= (latin-squares '[[A B C D]
