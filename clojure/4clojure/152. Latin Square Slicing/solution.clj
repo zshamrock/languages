@@ -98,8 +98,8 @@
           (let [square-head (conj shifted-square (vec shifted-row))
                 square-rest (nthrest square (inc i))]
             (if (seq square-rest)
-              (into square-head square-rest)
-              square-head))
+              (into square-head (vec square-rest))
+              (vec square-head)))
           (when-not (= (inc i) size)
             (recur (inc i) (conj shifted-square (vec row)))))))))
 
@@ -137,6 +137,27 @@
           (println "seen-squares" seen-squares)
           (into {} (map (fn [[k v]] (vector k (count v))) found-latin-squares-by-size)))))))
 
+(let [v (normalize [[8 6 7 3 2 5 1 4]
+                    [6 8 3 7]
+                    [7 3 8 6]
+                    [3 7 6 8 1 4 5 2]
+                    [1 8 5 2 4]
+                    [8 1 2 4 5]])]
+  (loop [next-v v]
+    (if (seq next-v)
+      (do 
+        (println next-v)
+        (recur (next-shifted-square next-v)))
+      )
+    )
+  )
+
+(all-sub-squares (normalize [[8 6 7 3 2 5 1 4]
+            [6 8 3 7]
+            [7 3 8 6]
+            [3 7 6 8 1 4 5 2]
+            [1 8 5 2 4]
+            [8 1 2 4 5]]) 2)
 (defn- run-all-tests []
   (is (= (latin-squares '[[A B C D]
                           [A C D B]
