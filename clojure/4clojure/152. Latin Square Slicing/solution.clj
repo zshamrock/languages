@@ -36,6 +36,23 @@
       (when (seq elements)
         (concat (repeat (inc spaces-in-front) 'X) elements (repeat (- n spaces-in-front (count elements) 1) 'X))))))
 
+(defn- reset-row
+  "Reset row to its initial state, i.e. moving all symbols into the beginning and filling the rest with X. 
+  Returns the 'reset-ed' row, which can be the same row if nothing to reset (the row full of symbols or spaces (X))."
+  [row]
+  (let [symbols (filter #(not= 'X %) row)
+        n (count row)]
+    (concat symbols (repeat (- n (count symbols)) 'X))))
+
+(defn- reset-row-test [] 
+  (is (= '[A B X] (reset-row '[X A B])))
+  (is (= '[A X X] (reset-row '[X A X])))
+  (is (= '[X X X] (reset-row '[X X X])))
+  (is (= '[A B C] (reset-row '[A B C])))
+  (is (= '[A X X] (reset-row '[A X X]))))
+
+(reset-row-test)
+
 (defn- shift-row-test []
   (is (= '[X X X A B C X] (shift-row '[X X A B C X X])))
   (is (= '[X X X X A B C] (shift-row '[X X X A B C X])))
@@ -91,28 +108,24 @@
 (defn- next-shifted-square 
   "Returns the next shifted square or nil otherwise. square arg is an vec of vecs."
   [square]
-  (let [size (count square)]
-    (loop [i 0 shifted-square []]
-      (let [row (nth square i)]
-        (if-let [shifted-row (shift-row row)]
-          (let [square-head (conj shifted-square (vec shifted-row))
-                square-rest (nthrest square (inc i))]
-            (if (seq square-rest)
-              (into square-head (vec square-rest))
-              (vec square-head)))
-          (when-not (= (inc i) size)
-            (recur (inc i) (conj shifted-square (vec row)))))))))
+  (loop [next-sq [] sq square]
+    (when (seq sq)
+      (if-let [shifted-row (shift-row (first sq))]
+        (vec (concat next-sq (vector (vec shifted-row)) (map vec (rest sq))))
+        (recur (conj next-sq (vec (reset-row (first sq)))) (rest sq))))))
 
 (defn- next-shifted-square-test []
   (is (= '[[X A B] [X A B] [A B C]] (next-shifted-square '[[A B X] [X A B] [A B C]])))
 
   (is (= '[[A B C] [X X A] [A B C]] (next-shifted-square '[[A B C] [X A X] [A B C]])))
   
-  (is (= '[[A B C] [X A B] [X A X]] (next-shifted-square '[[A B C] [X A B] [A X X]])))
+  (is (= '[[A B C] [A B X] [X A X]] (next-shifted-square '[[A B C] [X A B] [A X X]])))
+  
+  (is (= '[[B C X] [X X A] [X A B]] (next-shifted-square '[[X B C] [X A X] [X A B]])))
   
   (is (= nil (next-shifted-square '[[A B C] [X A B] [A B C]])))
 
-  (is (= nil (next-shifted-square '[[A B C] [X A B] [X X X]])))) 
+  (is (= nil (next-shifted-square '[[A B C] [X A B] [X X X]]))))
 
 (next-shifted-square-test)
 
