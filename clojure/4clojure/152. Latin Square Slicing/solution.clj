@@ -171,6 +171,7 @@
             [3 7 6 8 1 4 5 2]
             [1 8 5 2 4]
             [8 1 2 4 5]]) 2)
+
 (defn- run-all-tests []
   (is (= (latin-squares '[[A B C D]
                           [A C D B]
@@ -225,4 +226,4 @@
       {4 1, 3 1, 2 7}))
 )
 
-(run-all-tests)
+(time (run-all-tests))
