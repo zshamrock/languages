@@ -57,8 +57,8 @@
             (loop [next-sq [] sq square]
               (when (seq sq)
                 (if-let [shifted-row (shift-row (first sq))]
-                  (vec (concat next-sq (vector (vec shifted-row)) (map vec (rest sq))))
-                  (recur (conj next-sq (vec (reset-row (first sq)))) (rest sq))))))]
+                  (concat next-sq (vector shifted-row) (rest sq))
+                  (recur (conj next-sq (reset-row (first sq))) (rest sq))))))]
 
     (let [vv (normalize v)
           min-dimension (min (count vv) (count (first vv)))]
