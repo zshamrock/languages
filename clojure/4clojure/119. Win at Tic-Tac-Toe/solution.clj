@@ -13,16 +13,16 @@
 (is (= true (on-right-diagonal? 0 2)))
 
 (defn- win-move? [player [x y] board]
-  (let [row (assoc (nth board x) y player)
-        col (assoc (mapv #(get-in board [% y]) (range 3)) x player)
-        left-diagonal (assoc (mapv #(get-in board [% %]) (range 3)) x player)
-        right-diagonal (assoc (mapv #(get-in board [% (- 2 %)]) (range 3)) x player)
+  (let [row (nth board x)
+        col (mapv #(get-in board [% y]) (range 3))
+        left-diagonal (mapv #(get-in board [% %]) (range 3))
+        right-diagonal (mapv #(get-in board [% (- 2 %)]) (range 3))
         win-pattern (repeat 3 player)]
     (if (= :e (get-in board [x y]))
-      (or (= row win-pattern) 
-          (= col win-pattern)
-          (and (on-left-diagonal? x y) (= left-diagonal win-pattern))
-          (and (on-right-diagonal? x y) (= right-diagonal win-pattern)))
+      (or (= (assoc row y player) win-pattern) 
+          (= (assoc col x player) win-pattern)
+          (and (on-left-diagonal? x y) (= (assoc left-diagonal x player) win-pattern))
+          (and (on-right-diagonal? x y) (= (assoc right-diagonal x player) win-pattern)))
       false)))
 
 (is (= true (win-move? :x [0 1] [[:o :e :e] 
