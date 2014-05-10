@@ -18,6 +18,7 @@
         left-diagonal (mapv #(get-in board [% %]) (range 3))
         right-diagonal (mapv #(get-in board [% (- 2 %)]) (range 3))
         win-pattern (repeat 3 player)]
+
     (if (= :e (get-in board [x y]))
       (or (= win-pattern (assoc row y player)) 
           (= win-pattern (assoc col x player))
