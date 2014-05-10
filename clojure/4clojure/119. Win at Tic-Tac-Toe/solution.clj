@@ -12,15 +12,12 @@
 (is (= true (on-left-diagonal? 1 1)))
 (is (= true (on-right-diagonal? 0 2)))
 
-(def dbg (atom nil))
-
 (defn- win-move? [player [x y] board]
   (let [row (assoc (nth board x) y player)
         col (assoc (mapv #(get-in board [% y]) (range 3)) x player)
         left-diagonal (assoc (mapv #(get-in board [% %]) (range 3)) x player)
         right-diagonal (assoc (mapv #(get-in board [% (- 2 %)]) (range 3)) x player)
         win-pattern (repeat 3 player)]
-    (reset! dbg col)
     (if (= :e (get-in board [x y]))
       (or (= row win-pattern) 
           (= col win-pattern)
