@@ -3,18 +3,39 @@
 
 (require '[clojure.test :refer [is]])
 
+(defn- on-left-diagonal? [x y]
+  (= x y))
+
+(defn- on-right-diagonal? [x y]
+  (= 2 (+ x y)))
+
+(is (= true (on-left-diagonal? 1 1)))
+(is (= true (on-right-diagonal? 0 2)))
+
+(def dbg (atom nil))
+
 (defn- win-move? [player [x y] board]
   (let [row (assoc (nth board x) y player)
-        col (assoc (mapv #(get-in board [% x]) (range 3)) x player)
-        winner (repeat 3 player)]
-    (or (= row winner) (= col winner))))
+        col (assoc (mapv #(get-in board [% y]) (range 3)) x player)
+        left-diagonal (assoc (mapv #(get-in board [% %]) (range 3)) x player)
+        right-diagonal (assoc (mapv #(get-in board [% (- 2 %)]) (range 3)) x player)
+        win-pattern (repeat 3 player)]
+    (reset! dbg col)
+    (if (= :e (get-in board [x y]))
+      (or (= row win-pattern) 
+          (= col win-pattern)
+          (and (on-left-diagonal? x y) (= left-diagonal win-pattern))
+          (and (on-right-diagonal? x y) (= right-diagonal win-pattern)))
+      false)))
 
-(win-move? :x [0 0] [[:e :x :x] [:o :o :e] [:x :x :o]])
+(is (= true (win-move? :x [0 1] [[:o :e :e] 
+                                 [:o :x :o] 
+                                 [:x :x :e]])))
 
 (defn win-coordinates [player board]
-  (mapcat (fn [x y]) (range 3))
-  #{}
-  )
+  (set 
+    (filter #(win-move? player % board) 
+            (for [x (range 3) y (range 3)] [x y]))))
 
 (defn- run-all-tests [] 
 
