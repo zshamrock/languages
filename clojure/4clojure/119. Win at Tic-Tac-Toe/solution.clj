@@ -19,10 +19,10 @@
         right-diagonal (mapv #(get-in board [% (- 2 %)]) (range 3))
         win-pattern (repeat 3 player)]
     (if (= :e (get-in board [x y]))
-      (or (= (assoc row y player) win-pattern) 
-          (= (assoc col x player) win-pattern)
-          (and (on-left-diagonal? x y) (= (assoc left-diagonal x player) win-pattern))
-          (and (on-right-diagonal? x y) (= (assoc right-diagonal x player) win-pattern)))
+      (or (= win-pattern (assoc row y player)) 
+          (= win-pattern (assoc col x player))
+          (and (on-left-diagonal? x y) (= win-pattern (assoc left-diagonal x player)))
+          (and (on-right-diagonal? x y) (= win-pattern (assoc right-diagonal x player))))
       false)))
 
 (is (= true (win-move? :x [0 1] [[:o :e :e] 
