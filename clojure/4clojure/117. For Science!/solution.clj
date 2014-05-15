@@ -9,25 +9,34 @@
   (mapv #(mapv str (vec %)) maze)
   )
 
+(is (= [3 1] (find-mouse (normalize-maze 
+                 ["#######"
+                  "#     #"
+                  "#  #  #"
+                  "#M # C#"
+                  "#######"]))))
+
+(is (= [3 5] (find-cheese (normalize-maze 
+                 ["#######"
+                  "#     #"
+                  "#  #  #"
+                  "#M # C#"
+                  "#######"]))))
+
 (defn- find-what 
   "Find coordinates [x y] of what, mouse, cheese, whatever."
   [maze what]
+  (let [x (.indexOf (map #(some #{what} %) maze) what)
+        y (.indexOf (nth maze x) what)]
+    [x y]))
 
-  (let [what (
-               loop [m maze i 0]
-               (if (some #{what} (first maze))
-                 [i (.indexOf (first maze) what)]
-                 (recur (next maze) (inc i))
-                 ))]
-    what))
-
-(defn- find-mouse 
+(defn- find-mouse
   "Find mouse [x y] coordinates."
   [maze]
   (find-what maze "M")
   )
 
-(defn- find-cheese 
+(defn- find-cheese
   "Find cheese [x y] coordinates."
   [maze]
   (find-what maze "C")
@@ -38,7 +47,7 @@
     [(+ x i) (+ y j)]
     )))
 
-(is (= #{[1 2] [2 1]} (reachable-cells (normalize-maze 
+(is (= #{[1 2] [2 1]} (reachable-cells (normalize-maze
                  ["#######"
                   "#     #"
                   "#  #  #"
@@ -51,17 +60,16 @@
 (defn cheesy-endpoint-reachable? [maze]
   (let [m (normalize-maze maze)
         mouse (find-mouse m)
-        cheese (find-cheese m)
-        width (count (first m))
-        height (count m)]
+        cheese (find-cheese m)]
     (loop [cells #{mouse} seen #{mouse}]
-      (mapcat (fn [[x y]] ) cells)
-      (for [[x y] cells 
-            :when (and (not= width (inc x)) (= " " (get-in m [(inc x) y])))])
-      )
-    )
-  false
-  )
+      (if-not (empty? cells)
+        (let [reachable (mapcat (partial reachable-cells m) cells)]
+          (if (some #{cheese} reachable)
+            true
+            (recur (apply disj (set reachable) seen) (into seen reachable))
+            )
+          )
+        false))))
 
 (defn- run-all-tests []
   (is (= true  (cheesy-endpoint-reachable? ["M   C"])))
