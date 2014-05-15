@@ -33,18 +33,39 @@
   (find-what maze "C")
   )
 
+(defn- reachable-cells [maze [x y]]
+  (set (for [[i j] [[1 0] [-1 0] [0 1] [0 -1]] :let [v (get-in maze [(+ x i) (+ y j)] "#")] :when (or (= " " v) (= "C" v))]
+    [(+ x i) (+ y j)]
+    )))
+
+(is (= #{[1 2] [2 1]} (reachable-cells (normalize-maze 
+                 ["#######"
+                  "#     #"
+                  "#  #  #"
+                  "#M # C#"
+                  "#######"]) [1 1])))
+
+(is (= #{} (reachable-cells (normalize-maze 
+                 ["###M###"]) [0 4])))
+
 (defn cheesy-endpoint-reachable? [maze]
   (let [m (normalize-maze maze)
-        
-        ]
-    (loop [cells [] seen #{}])
+        mouse (find-mouse m)
+        cheese (find-cheese m)
+        width (count (first m))
+        height (count m)]
+    (loop [cells #{mouse} seen #{mouse}]
+      (mapcat (fn [[x y]] ) cells)
+      (for [[x y] cells 
+            :when (and (not= width (inc x)) (= " " (get-in m [(inc x) y])))])
+      )
     )
   false
   )
 
 (defn- run-all-tests []
   (is (= true  (cheesy-endpoint-reachable? ["M   C"])))
-
+ 
   (is (= false (cheesy-endpoint-reachable? ["M # C"])))
 
   (is (= true  (cheesy-endpoint-reachable? 
