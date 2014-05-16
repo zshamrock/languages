@@ -3,6 +3,19 @@
 
 (require '[clojure.test :refer [is]])
 
+(def ^{:private true} 
+  ranks-to-num (merge (zipmap (map (comp first str) (range 2 10)) (range 2 10)) 
+                      (zipmap [\T \J \Q \K \A] (iterate inc 10)))
+  )
+
+(defn- suites [cards]
+  (mapv #(first %) cards)
+  )
+
+(defn- ranks [cards]
+  (sort (mapv #(ranks-to-num (second %)) cards))
+  )
+
 (defn best-hand [cards]
   nil
   )
