@@ -4,7 +4,7 @@
 (require '[clojure.test :refer [is]])
 
 (def ^{:private true} 
-  ranks-to-num (merge (zipmap (map (comp first str) (range 2 10)) (range 2 10)) 
+  ranks-to-num (merge (zipmap (map #(Character/forDigit % 10) (range 2 10)) (range 2 10)) 
                       (zipmap [\T \J \Q \K \A] (iterate inc 10)))
   )
 
