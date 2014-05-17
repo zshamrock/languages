@@ -13,12 +13,29 @@
   )
 
 (defn- ranks [cards]
-  (sort (mapv #(ranks-to-num (second %)) cards))
+  (sort (mapv #(dec (ranks-to-num (second %))) cards)) ; do dec so start with 1 (and for ace start with 0)
   )
 
+(defn- in-sequence? [ranks]
+  (let [one? (partial = 1)
+          sorted-ranks (sort ranks)]
+    (every? one? (map - (next sorted-ranks) (butlast sorted-ranks)))))
+
+(do 
+  (is (true? (in-sequence? [1 2 3 4 5])))
+  (is (true? (in-sequence? [0 1 2 3 4 5])))
+  (is (true? (in-sequence? [5 4])))
+  (is (false? (in-sequence? [2 3 4 8 9]))))
+
+(defn- straight-flush? [cards]
+  (let [s (suites cards)
+        r (ranks cards)]
+    (and (every? #{(first s)} s) (in-sequence? r))))
+
 (defn best-hand [cards]
-  nil
-  )
+  (cond 
+    (straight-flush? cards) :straight-flush
+    :else :high-card))
 
 (defn- run-all-tests []
   (is (= :high-card (best-hand ["HA" "D2" "H3" "C9" "DJ"])))
