@@ -36,7 +36,7 @@
   (= 1 (-> cards suites distinct count)))
 
 (defn- four-of-a-kind? [cards]
-  (some #{4} (-> cards ranks frequencies vals)))
+  (= (list 1 4) (-> cards ranks frequencies vals sort)))
 
 (defn- full-house? [cards]
   (= (list 2 3) (-> cards ranks frequencies vals sort)))
