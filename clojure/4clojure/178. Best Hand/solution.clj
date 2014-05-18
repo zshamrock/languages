@@ -38,6 +38,10 @@
 (defn- full-house? [cards]
   (= #{3 2} (-> cards ranks frequencies vals set)))
 
+(defn- flush? [cards]
+  (= 1 (-> cards suites distinct count))
+  )
+
 (defn best-hand [cards]
   (cond 
     (straight-flush? cards) :straight-flush
