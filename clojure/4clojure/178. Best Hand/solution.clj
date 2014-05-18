@@ -13,24 +13,27 @@
   )
 
 (defn- ranks [cards]
-  (sort (mapv #(dec (ranks-to-num (second %))) cards)) ; do dec so start with 1 (and for ace start with 0)
+  (sort (mapv #(ranks-to-num (second %)) cards))
   )
 
 (defn- in-sequence? [cards]
   (let [one? (partial = 1)
-          sorted-ranks (sort (ranks cards))]
-    (every? one? (map - (next sorted-ranks) (butlast sorted-ranks)))))
+        sorted-ranks (sort (ranks cards))
+        in-seq? (fn [sorted-ranks]
+                  (every? one? (map - (next sorted-ranks) (butlast sorted-ranks))))]
+    (or (in-seq? sorted-ranks)
+        (in-seq? (sort (replace {14 1} sorted-ranks)))))) ; treat ace as the low rank
 
 (do 
   (is (true? (in-sequence? ["H2" "H3" "H4" "H5"])))
   (is (true? (in-sequence? ["H5" "H4"])))
-  (is (false? (in-sequence? ["H2" "H3" "H4" "H8" "H9"]))))
+  (is (false? (in-sequence? ["H2" "H3" "H4" "H8" "H9"])))
+  (is (true? (in-sequence? ["HJ" "HQ" "HK" "HA"])))
+  (is (true? (in-sequence? ["H2" "H4" "H3" "HA"])))
+  )
 
 (defn- all-same-suites? [cards]
   (= 1 (-> cards suites distinct count)))
-
-(defn- straight-flush? [cards]
-  (and (all-same-suites? cards) (in-sequence? cards)))
 
 (defn- four-of-a-kind? [cards]
   (some #{4} (-> cards ranks frequencies vals)))
@@ -42,8 +45,10 @@
   (all-same-suites? cards))
 
 (defn- straight? [cards]
-  [let ]
-  )
+  (in-sequence? cards))
+
+(defn- straight-flush? [cards]
+  (and (straight? cards) (flush? cards)))
 
 (defn best-hand [cards]
   (cond 
@@ -51,6 +56,7 @@
     (four-of-a-kind? cards) :four-of-a-kind
     (full-house? cards) :full-house
     (flush? cards) :flush
+    (straight? cards) :straight
     :else :high-card))
 
 (defn- run-all-tests []
