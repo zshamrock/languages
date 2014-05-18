@@ -39,7 +39,7 @@
   (some #{4} (-> cards ranks frequencies vals)))
 
 (defn- full-house? [cards]
-  (= #{3 2} (-> cards ranks frequencies vals set)))
+  (= (list 2 3) (-> cards ranks frequencies vals sort)))
 
 (defn- flush? [cards]
   (all-same-suites? cards))
@@ -51,7 +51,13 @@
   (and (straight? cards) (flush? cards)))
 
 (defn- three-of-a-kind? [cards]
-  (some #{3} (-> cards ranks frequencies vals)))
+  (= (list 1 1 3) (-> cards ranks frequencies vals sort)))
+
+(defn- two-pair? [cards]
+  (= (list 1 2 2) (-> cards ranks frequencies vals sort)))
+
+(defn- pair? [cards]
+  (= (list 1 1 1 2) (-> cards ranks frequencies vals sort)))
 
 (defn best-hand [cards]
   (cond 
@@ -61,6 +67,8 @@
     (flush? cards) :flush
     (straight? cards) :straight
     (three-of-a-kind? cards) :three-of-a-kind
+    (two-pair? cards) :two-pair
+    (pair? cards) :pair
     :else :high-card))
 
 (defn- run-all-tests []
