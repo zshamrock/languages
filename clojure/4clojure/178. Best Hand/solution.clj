@@ -35,11 +35,14 @@
 (defn- all-same-suites? [cards]
   (= 1 (-> cards suites distinct count)))
 
+(defn- ranks-freq [cards]
+  (-> cards ranks frequencies vals sort))
+
 (defn- four-of-a-kind? [cards]
-  (= (list 1 4) (-> cards ranks frequencies vals sort)))
+  (= [1 4] (ranks-freq cards)))
 
 (defn- full-house? [cards]
-  (= (list 2 3) (-> cards ranks frequencies vals sort)))
+  (= [2 3] (ranks-freq cards)))
 
 (defn- flush? [cards]
   (all-same-suites? cards))
@@ -51,13 +54,13 @@
   (and (straight? cards) (flush? cards)))
 
 (defn- three-of-a-kind? [cards]
-  (= (list 1 1 3) (-> cards ranks frequencies vals sort)))
+  (= [1 1 3] (ranks-freq cards)))
 
 (defn- two-pair? [cards]
-  (= (list 1 2 2) (-> cards ranks frequencies vals sort)))
+  (= [1 2 2] (ranks-freq cards)))
 
 (defn- pair? [cards]
-  (= (list 1 1 1 2) (-> cards ranks frequencies vals sort)))
+  (= [1 1 1 2] (ranks-freq cards)))
 
 (defn best-hand [cards]
   (cond 
