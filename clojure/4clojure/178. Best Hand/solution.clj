@@ -50,6 +50,9 @@
 (defn- straight-flush? [cards]
   (and (straight? cards) (flush? cards)))
 
+(defn- three-of-a-kind? [cards]
+  (some #{3} (-> cards ranks frequencies vals)))
+
 (defn best-hand [cards]
   (cond 
     (straight-flush? cards) :straight-flush
@@ -57,6 +60,7 @@
     (full-house? cards) :full-house
     (flush? cards) :flush
     (straight? cards) :straight
+    (three-of-a-kind? cards) :three-of-a-kind
     :else :high-card))
 
 (defn- run-all-tests []
