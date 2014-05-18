@@ -33,13 +33,16 @@
     (and (every? #{(first s)} s) (in-sequence? r))))
 
 (defn- four-of-a-kind? [cards]
-  (let [r (ranks cards)]
-   (some #{4} (vals (frequencies r)))))
+  (some #{4} (-> cards ranks frequencies vals)))
+
+(defn- full-house? [cards]
+  (= #{3 2} (-> cards ranks frequencies vals set)))
 
 (defn best-hand [cards]
   (cond 
     (straight-flush? cards) :straight-flush
     (four-of-a-kind? cards) :four-of-a-kind
+    (full-house? cards) :full-house
     :else :high-card))
 
 (defn- run-all-tests []
