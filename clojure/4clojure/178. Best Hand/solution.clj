@@ -32,9 +32,14 @@
         r (ranks cards)]
     (and (every? #{(first s)} s) (in-sequence? r))))
 
+(defn- four-of-a-kind? [cards]
+  (let [r (ranks cards)]
+   (some #{4} (vals (frequencies r)))))
+
 (defn best-hand [cards]
   (cond 
     (straight-flush? cards) :straight-flush
+    (four-of-a-kind? cards) :four-of-a-kind
     :else :high-card))
 
 (defn- run-all-tests []
