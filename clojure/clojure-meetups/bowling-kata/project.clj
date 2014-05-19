@@ -3,9 +3,8 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.6.0"]
-                 [midje "1.6.3"]]
+  :dependencies [[org.clojure/clojure "1.6.0"]]
   :main ^:skip-aot bowling-kata.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
-             :profiles {:dev {:dependencies [[midje "1.5.1"]]}}})
+             :dev {:dependencies [[midje "1.6.3"]]}})
