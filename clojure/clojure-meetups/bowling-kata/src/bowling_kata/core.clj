@@ -28,3 +28,4 @@
   (is (= 160 (rolls [4 6 7 3 2 8 5 5 6 4 9 1 5 5 3 7 8 2 8 2 7]))) ; all spares
   (is (= 300 (rolls (repeat 12 10)))) ; perfect game
   )
+
