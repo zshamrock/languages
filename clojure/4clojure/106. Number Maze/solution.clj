@@ -1,6 +1,8 @@
 ; 106. Number Maze
 ; https://www.4clojure.com/problem/106
 
+(in-ns 'user)
+
 (require '[clojure.test :refer [is]])
 
 (defn shortest-path [start end]
