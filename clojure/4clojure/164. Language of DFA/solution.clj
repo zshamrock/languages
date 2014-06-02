@@ -5,22 +5,18 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn recognized-strings [{:keys [states alphabet start accepts] :as dfa}]
-  (let [strings (atom #{})]
+(defn- traverse [transitions seen-states state strings string accepts]
+  (if (seq transitions)
+    (apply clojure.set/union 
+           (for [[state-value new-state] (vec transitions) 
+                 :when (not (contains? seen-states new-state))
+                 :let [new-string (str string state-value)]]
+             (traverse (get transitions new-state) (conj seen-states new-state) new-state (if (contains? accepts new-state) (conj strings new-string) string) new-string accepts)))  
+    strings)
+  )
 
-    (loop [seen-states #{start} 
-           state start 
-           string ""]
-      (let [transitions (get (dfa :transitions) state)]
-        (doseq [[state-value new-state] (vec transitions) 
-                :when (not (contains? seen-states new-state))
-                :let [new-string (str string state-value)]]
-          (when (contains? accepts new-state)
-            (swap! strings conj new-string))
-
-          (recur (conj seen-states new-state) new-state new-string))))
-
-    @strings))
+(defn recognized-strings [{:keys [states alphabet start accepts transitions] :as dfa}]
+  (traverse transitions #{start} start #{} "" accepts))
 
 (defn- run-all-test []
   (is (= #{"a" "ab" "abc"}
@@ -29,7 +25,7 @@
                    :alphabet #{a b c}
                    :start q0
                    :accepts #{q1 q2 q3}
-                   :transitions  {q0  {a q1 b q2}
+                   :transitions  {q0  {a q1}
                                   q1  {b q2}
                                   q2  {c q3}}}))))
   )
