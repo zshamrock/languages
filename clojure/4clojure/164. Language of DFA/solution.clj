@@ -5,18 +5,21 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn- traverse [transitions seen-states state strings string accepts]
+(defn- traverse [transitions seen-states state strings string dfa]
   (if (seq transitions)
     (apply clojure.set/union 
            (for [[state-value new-state] (vec transitions) 
                  :when (not (contains? seen-states new-state))
                  :let [new-string (str string state-value)]]
-             (traverse (get transitions new-state) (conj seen-states new-state) new-state (if (contains? accepts new-state) (conj strings new-string) string) new-string accepts)))  
+             (do
+               (println state-value new-state)
+               
+             (traverse (get (:transitions dfa) new-state) (conj seen-states new-state) new-state (if (contains? (:accepts dfa) new-state) (conj strings new-string) string) new-string dfa))))  
     strings)
   )
 
 (defn recognized-strings [{:keys [states alphabet start accepts transitions] :as dfa}]
-  (traverse transitions #{start} start #{} "" accepts))
+  (traverse (get transitions start) #{start} start #{} "" dfa))
 
 (defn- run-all-test []
   (is (= #{"a" "ab" "abc"}
