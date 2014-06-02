@@ -5,9 +5,22 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn recognized-strings [dfa]
-  #{} 
-  )
+(defn recognized-strings [{:keys [states alphabet start accepts] :as dfa}]
+  (let [strings (atom #{})]
+
+    (loop [seen-states #{start} 
+           state start 
+           string ""]
+      (let [transitions (get (dfa :transitions) state)]
+        (doseq [[state-value new-state] (vec transitions) 
+                :when (not (contains? seen-states new-state))
+                :let [new-string (str string state-value)]]
+          (when (contains? accepts new-state)
+            (swap! strings conj new-string))
+
+          (recur (conj seen-states new-state) new-state new-string))))
+
+    @strings))
 
 (defn- run-all-test []
   (is (= #{"a" "ab" "abc"}
@@ -16,7 +29,7 @@
                    :alphabet #{a b c}
                    :start q0
                    :accepts #{q1 q2 q3}
-                   :transitions  {q0  {a q1}
+                   :transitions  {q0  {a q1 b q2}
                                   q1  {b q2}
                                   q2  {c q3}}}))))
   )
