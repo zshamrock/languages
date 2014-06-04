@@ -6,7 +6,6 @@
 (require '[clojure.test :refer [is]])
 
 (defn- traverse [transitions state seen-states strings string dfa]
-  (comment (println "seen states:" seen-states ", state:" state ", strings: " strings))
   (if (and (= seen-states (:states dfa)) (contains? (:accepts dfa) state))
     strings 
 
@@ -15,21 +14,19 @@
              (for [[state-value new-state] (vec transitions) 
                    :when (and (not (contains? seen-states state)))
                    :let [new-string (str string state-value)]]
-               (do
-                 (comment (println state-value new-state))
 
-                 (traverse 
+               (traverse 
                    (get (:transitions dfa) new-state) 
                    new-state 
                    (conj seen-states state)
                    (if (contains? (:accepts dfa) new-state) (conj strings new-string) strings) 
                    new-string 
-                   dfa))) 
+                   dfa)) 
              )  
       strings))
   )
 
-(defn recognized-strings [{:keys [states alphabet start accepts transitions] :as dfa}]
+(defn recognized-strings [{:keys [start transitions] :as dfa}]
   (traverse (get transitions start) start #{} [] "" dfa))
 
 (defn- run-all-test []
