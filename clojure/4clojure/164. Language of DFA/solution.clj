@@ -5,38 +5,40 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn- traverse [transitions seen-states state strings string dfa]
-  (if (seq transitions)
-    (apply clojure.set/union 
-           (for [[state-value new-state] (vec transitions) 
-                 :when (not (contains? seen-states new-state))
-                 :let [new-string (str string state-value)]]
-             (do
-               (comment (println state-value new-state))
+(defn- traverse [transitions state seen-states strings string dfa]
+  (if (and (= seen-states (:states dfa)) (contains? (:accepts dfa) state))
+    strings 
+
+    (if (seq transitions)
+      (apply concat 
+             (for [[state-value new-state] (vec transitions) 
+                   :when (and (not (contains? seen-states state)))
+                   :let [new-string (str string state-value)]]
 
                (traverse 
-                 (get (:transitions dfa) new-state) 
-                 (conj seen-states new-state) 
-                 new-state 
-                 (if (contains? (:accepts dfa) new-state) (conj strings new-string) strings) 
-                 new-string 
-                 dfa))))  
-    strings)
+                   (get (:transitions dfa) new-state) 
+                   new-state 
+                   (conj seen-states state)
+                   (if (contains? (:accepts dfa) new-state) (conj strings new-string) strings) 
+                   new-string 
+                   dfa)) 
+             )  
+      strings))
   )
 
-(defn recognized-strings [{:keys [states alphabet start accepts transitions] :as dfa}]
-  (lazy-seq (traverse (get transitions start) #{start} start [] "" dfa)))
+(defn recognized-strings [{:keys [start transitions] :as dfa}]
+  (traverse (get transitions start) start #{} [] "" dfa))
 
 (defn- run-all-test []
   (is (= #{"a" "ab" "abc"}
          (set (recognized-strings 
-                 '{:states #{q0 q1 q2 q3}
-                   :alphabet #{a b c}
-                   :start q0
-                   :accepts #{q1 q2 q3}
-                   :transitions  {q0  {a q1}
-                                  q1  {b q2}
-                                  q2  {c q3}}}))))
+                '{:states #{q0 q1 q2 q3}
+                  :alphabet #{a b c}
+                  :start q0
+                  :accepts #{q1 q2 q3}
+                  :transitions  {q0  {a q1}
+                                 q1  {b q2}
+                                 q2  {c q3}}}))))
 
   (is (= #{"hi" "hey" "hello"}
          (set (recognized-strings 
@@ -70,6 +72,32 @@
                                          q1 {0 q1, 1 q0}}}))]
     (is (and (every? (partial re-matches #"0*(?:10*10*)*") res)
              (= res (distinct res)))))
+
+  (let  [res  (take 2000 (recognized-strings 
+                           '{:states #{q0 q1}
+                             :alphabet #{n m}
+                             :start q0
+                             :accepts #{q1}
+                             :transitions  {q0  {n q0, m q1}}}))]
+    (is (and  (every?  (partial re-matches #"n*m") res)
+             (= res  (distinct res)))))
+
+  (let  [res  (take 2000 (recognized-strings 
+                           '{:states #{q0 q1 q2 q3 q4 q5 q6 q7 q8 q9}
+                             :alphabet #{i l o m p t}
+                             :start q0
+                             :accepts #{q5 q8}
+                             :transitions  {q0  {l q1}
+                                            q1  {i q2, o q6}
+                                            q2  {m q3}
+                                            q3  {i q4}
+                                            q4  {t q5}
+                                            q6  {o q7}
+                                            q7  {p q8}
+                                            q8  {l q9}
+                                            q9  {o q6}}}))]
+    (is (and  (every?  (partial re-matches #"limit|(?:loop)+") res)
+             (= res  (distinct res)))))
   )
 
 (run-all-test)
