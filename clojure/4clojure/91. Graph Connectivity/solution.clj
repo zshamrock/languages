@@ -6,7 +6,9 @@
 (require '[clojure.test :refer [is]])
 
 (defn connected? [graph]
-  false
+  (let [g (apply merge-with vector (map #(conj {} % (vec (reverse %))) graph))]
+    g
+    )
   )
 
 (defn- run-all-tests  []
