@@ -1,0 +1,2 @@
+Try to solve the problem without using atom. 
+Investigate on reduce/flatten instead or think different approach.
