@@ -6,7 +6,8 @@
 (require '[clojure.test :refer [is]])
 
 (defn connected? [graph]
-  (let [g (apply merge-with #(vec (concat %1 %2)) (map #(conj {} [(first %) [(second %)]] [(second %) [(first %)]]) graph))]
+  (let [g (apply merge-with #(vec (concat %1 %2)) 
+                 (map #(conj {} [(first %) [(second %)]] [(second %) [(first %)]]) graph))]
     g
     )
   )
