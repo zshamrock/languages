@@ -1,7 +1,7 @@
 ; 101. Levenshtein Distance
 ; https://www.4clojure.com/problem/101
 
-( in-ns 'user)
+(in-ns 'user)
 
 (require '[clojure.test :refer [is]])
 
