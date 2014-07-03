@@ -4,20 +4,40 @@
   )
 
 ; took from clojure.java.io
-(defn- parse-args
-  [args]
+(defn- parse-args [args]
   (let [default-encoding "UTF-8" ;; see sh doc string
         default-opts {:files-only false}
         [cmd opts] (split-with string? args)]
     [cmd (merge default-opts (apply hash-map opts))]))
 
-(defn ls [& args]
+(defn- -exec [cmd & args]
+  (let [returns (apply sh cmd args)]    
+    (if (zero? (:exit returns))
+      (when-not (empty? (:out returns)) (:out returns))
+      (do 
+        (:err returns)
+        (System/exit (:exit returns))))))
+
+(defn ls 
+  "ls <optional directory, by default current directory> + options. Available options are: :files-only true"
+  [& args]
   (let [[cmd opts] (parse-args args)
         dir (or (first cmd) ".")
-        files (clojure.string/split (:out (sh "ls" :dir dir)) #"\n") 
+        files (clojure.string/split (-exec "ls" :dir dir) #"\n") 
         java-files (map file files)
         {:keys [files-only]} opts]
     (if files-only
       (filter #(.isFile %) java-files)
-      java-files
-      )))
+      java-files)))
+
+(defn cp 
+  "copy src into dest. Both src and dest can be keywords or strings (in any combination), for ease of use and less typing. Ex.: (cp :README.md :documentation)."
+  [src dest]
+  (let [from (name src)
+        to (name dest)]
+    (-exec "cp" from to)))
+
+(defn rm 
+  "rm the target. Target can be the keyword."
+  [target]
+  (-exec "rm" (name target)))
