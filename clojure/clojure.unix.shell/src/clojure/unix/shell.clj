@@ -11,12 +11,13 @@
     [cmd (merge default-opts (apply hash-map opts))]))
 
 (defn- -exec [cmd & args]
-  (let [returns (apply sh cmd args)]    
-    (if (zero? (:exit returns))
-      (when-not (empty? (:out returns)) (:out returns))
+  (let [returns (apply sh cmd args)
+        {:keys [out exit err]} returns]    
+    (if (zero? exit)
+      (when-not (empty? out) out)
       (do 
-        (:err returns)
-        (System/exit (:exit returns))))))
+        err 
+        (System/exit exit)))))
 
 (defn ls 
   "ls <optional directory, by default current directory> + options. Available options are: :files-only true"
