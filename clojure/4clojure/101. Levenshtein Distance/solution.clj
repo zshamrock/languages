@@ -7,10 +7,21 @@
 
 (defn levenshtein-distance [x y]
   (let [cx (count x) 
-        cy (count y)]
+        cy (count y)
+        distance (fn [x y]
+                   (count (filter false? (map = x y))))
+        try-all (fn [x y]
+                  (let [cx (count x) 
+                        cy (count y)
+                        distances                         
+                        (for [i (range (inc (- cy cx)))]
+                          (distance x (take cx (drop i y))))
+                        min-distance (apply min distances)]
+                    (+ min-distance (- cy cx))))]
     (cond
-      (= cx cy)
-      (count (filter false? (map = x y)))))
+      (= cx cy) (distance x y)
+      (> cx cy) (try-all y x)
+      :else (try-all x y)))
   )
 
 (defn- run-all-tests []
