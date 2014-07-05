@@ -6,8 +6,12 @@
 (require '[clojure.test :refer [is]])
 
 (defn levenshtein-distance [x y]
- 0
- )
+  (let [cx (count x) 
+        cy (count y)]
+    (cond
+      (= cx cy)
+      (count (filter false? (map = x y)))))
+  )
 
 (defn- run-all-tests []
   (is (= (levenshtein-distance "kitten" "sitting") 3))
