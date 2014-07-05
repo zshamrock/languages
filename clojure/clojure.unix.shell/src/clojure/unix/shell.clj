@@ -30,6 +30,8 @@
       (filter #(.isFile %) java-files)
       java-files)))
 
+; TODO: check if the src and dest are directories (both), and do recursive copying
+; meaningfull combinations: file->file, file->directory, directory->directory 
 (defn cp 
   "copy src into dest. Both src and dest can be keywords or strings (in any combination), for ease of use and less typing. Ex.: (cp :README.md :documentation)."
   [src dest]
@@ -41,3 +43,7 @@
   "rm the target. Target can be the keyword."
   [target]
   (-exec "rm" (name target)))
+
+; commands to implement: mv chown chmod grep sort pwd cd? shutdown service ps free top kill cat df mount mkdir whereis whatis which locate tail deb/rpm/yum (based on the distribution) wget   
+
+; maybe specific commands/support for git, as plugins, extensions
