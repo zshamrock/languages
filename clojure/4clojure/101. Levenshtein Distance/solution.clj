@@ -24,6 +24,22 @@
       :else (try-all x y)))
   )
 
+(defn generate [alphabets size]
+  (cond 
+    (= (count alphabets) size) [alphabets]
+    (= 1 size) (mapv str alphabets) 
+    :else (vec (concat 
+                 (map #(str (first alphabets) %) (generate (subs alphabets 1) (dec size))) 
+                 (generate (subs alphabets 1) size)))
+    )
+  )
+
+(is (= (mapv str "lisp") (generate "lisp" 1)))
+(is (= ["li" "ls" "lp" "is" "ip" "sp"] (generate "lisp" 2)))
+(is (= ["lis" "lip" "lsp" "isp"] (generate "lisp" 3)))
+(is (= ["lisp"] (generate "lisp" 4)))
+
+
 (defn- run-all-tests []
   (is (= (levenshtein-distance "kitten" "sitting") 3))
   (is (= (levenshtein-distance "closure" "clojure") (levenshtein-distance "clojure" "closure") 1))
