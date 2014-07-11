@@ -1,6 +1,6 @@
 ; 152. Latin Square Slicing
 ; https://www.4clojure.com/problem/152
-
+; try without for
 (require '[clojure.test :refer [is]])
 
 (defn- latin-square? [square] ; square is a seq where each n elements (of total n*n) represent a row
