@@ -19,7 +19,7 @@
                        (conj primes number)))))]
     primes))
 
-(defn count-occurences [coll]
+(defn count-occurrences [coll]
   (reduce #(assoc %1 %2 (inc (%1 %2 0))) {} coll)
   )
 
@@ -43,7 +43,7 @@
 (merge-with + {:a 12} {:b 4} {:a 3 :b 7})
 
 ; solution formatted for hackerrank
-(letfn [(count-occurences [coll]
+(letfn [(count-occurrences [coll]
           (reduce #(assoc %1 %2 (inc (%1 %2 0))) {} coll))
 
         (prime-factorization [n]
