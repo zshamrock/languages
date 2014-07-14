@@ -25,7 +25,7 @@
 
 
 (let [all-factorization (for [n [597 322 187 734 498 215 176 451 114 204]]
-                          (count-occurences (prime-factorization n)))
+                          (frequencies (prime-factorization n)))
       lcm (apply merge-with max all-factorization)]
   (println lcm)
   (long (reduce #(* %1 (long (Math/pow (key %2) (val %2)))) 1 lcm)))
@@ -36,6 +36,7 @@
     (into {} (map #(vector (key %) (count (val %))) (group-by identity coll)))
     (reduce #(assoc %1 %2  (inc  (%1 %2 0)))  {} coll)
     (apply merge-with + (map #(assoc {} % 1) coll))
+    (frequencies coll)
     {2 3, 3 1, 4 1, 5 2}
     ))
 
@@ -56,6 +57,6 @@
   (let [_ (read-line)
         jumps (map #(Long/parseLong %) (clojure.string/split  (read-line) #" "))
         all-factorization (for [n jumps]
-                            (count-occurences (prime-factorization n)))
+                            (frequencies (prime-factorization n)))
         lcm (apply merge-with max all-factorization)]
     (println (long (reduce #(* %1 (long (Math/pow (key %2) (val %2)))) 1 lcm)))))
