@@ -1,6 +1,9 @@
 ; 152. Latin Square Slicing
 ; https://www.4clojure.com/problem/152
 ; try without for
+
+(in-ns 'user)
+
 (require '[clojure.test :refer [is]])
 
 (defn- latin-square? [square] ; square is a seq where each n elements (of total n*n) represent a row
@@ -71,9 +74,16 @@
   (let [max-length (apply max (map count v))
         rows (count v)                
         ]
-    (for [i (range rows)]
-      (let [row (nth v i)]
-        (concat row (repeat (- max-length (count row)) 'X))))))
+    (loop [i 0 normalized []]
+          (let [row (nth v i)
+                normalized-row (concat row (repeat (- max-length (count row)) 'X))
+                ]
+            (if (= i (dec rows))
+              (conj normalized normalized-row)
+              (recur (inc i) (conj normalized normalized-row))
+              )
+            )
+          )))
 
 (= [[1 2 'X 'X] [1 2 3 4] ['X 'X 'X 'X] [1 'X 'X 'X]] (normalize [[1 2] [1 2 3 4] [] [1]]))
 
