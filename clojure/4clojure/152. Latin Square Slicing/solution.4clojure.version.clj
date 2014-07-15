@@ -1,3 +1,5 @@
+(in-ns 'user)
+
 (require '[clojure.test :refer [is]])
 
 (defn latin-squares [v]
@@ -36,21 +38,39 @@
             (let [max-length (apply max (map count v))
                   rows (count v)                
                   ]
-              (for [i (range rows)]
-                (let [row (nth v i)]
-                  (concat row (repeat (- max-length (count row)) 'X))))))
+              (loop [i 0 normalized []]
+                (let [row (nth v i)
+                      normalized-row (concat row (repeat (- max-length (count row)) 'X))
+                      ]
+                  (if (= i (dec rows))
+                    (conj normalized normalized-row)
+                    (recur (inc i) (conj normalized normalized-row))
+                    )))))
 
           (all-sub-squares 
             [v dimension]
             (let [width (count (first v)) 
-                  height (count v)]
-              (for [x (range (inc (- height dimension))) ; range end is exclusive, but we need the end to be inclusive, so there is inc for it
-                    y (range (inc (- width dimension)))]
-                (loop [i 0 square []]
-                  (if-not (= i dimension)
-                    (let [row (take dimension (drop y (nth v (+ i x))))] 
-                      (recur (inc i) (concat square row)))
-                    square)))))
+                  height (count v)
+                  max-x (- height dimension)
+                  max-y (- width dimension) 
+                  ]
+              (loop [x 0 y 0 sub-squares []]
+                (let [sub-square 
+                      (loop [i 0 square []]
+                        (if-not (= i dimension)
+                          (let [row (take dimension (drop y (nth v (+ i x))))] 
+                            (recur (inc i) (concat square row)))
+                          square))]
+                  (cond 
+                    (and (= x max-x) (= y max-y))
+                    (conj sub-squares sub-square) 
+
+                    (= y max-y)
+                    (recur (inc x) 0 (conj sub-squares sub-square))
+
+                    :default
+                    (recur x (inc y) (conj sub-squares sub-square)))
+                  ))))
 
           (next-shifted-square 
             [square]

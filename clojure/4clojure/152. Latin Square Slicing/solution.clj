@@ -1,6 +1,5 @@
 ; 152. Latin Square Slicing
 ; https://www.4clojure.com/problem/152
-; try without for
 
 (in-ns 'user)
 
@@ -91,14 +90,27 @@
   "Return all sub squares given dimension. v is a normalized version of the original V."
   [v dimension]
   (let [width (count (first v)) 
-        height (count v)]
-    (for [x (range (inc (- height dimension))) ; range end is exclusive, but we need the end to be inclusive, so there is inc for it
-          y (range (inc (- width dimension)))]
-      (loop [i 0 square []]
-        (if-not (= i dimension)
-          (let [row (take dimension (drop y (nth v (+ i x))))] 
-            (recur (inc i) (concat square row)))
-          square)))))
+        height (count v)
+        max-x (- height dimension)
+        max-y (- width dimension) 
+        ]
+    (loop [x 0 y 0 sub-squares []] ; actually used (for) form here, but 4clojure sandbox works poor (performance wise) with for, so only solution with (loop) satisfies 4clojure time limit (but on the local machine, both solution run less than 1 sec)
+      (let [sub-square 
+            (loop [i 0 square []]
+              (if-not (= i dimension)
+                (let [row (take dimension (drop y (nth v (+ i x))))] 
+                  (recur (inc i) (concat square row)))
+                square))]
+        (cond 
+          (and (= x max-x) (= y max-y))
+          (conj sub-squares sub-square) 
+
+          (= y max-y)
+          (recur (inc x) 0 (conj sub-squares sub-square))
+
+          :default
+          (recur x (inc y) (conj sub-squares sub-square)))
+        ))))
 
 (defn- all-sub-squares-test []
   (is (= '((1 2 1 2) (2 X 2 3) (X X 3 4) (1 2 X X) (2 3 X X) (3 4 X X) (X X 1 X) (X X X X) (X X X X)) 
