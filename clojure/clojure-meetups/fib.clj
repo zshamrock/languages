@@ -54,4 +54,10 @@
     println))
 
 
-; explore lazy-cat
+; explore lazy-ness (lazy-cat, iterate)
+(let [fibos (iterate (fn [[a0 a1]] [a1 (+ a0 a1)]) [0 1])
+       fibo (fn [n] (->> n dec (nth fibos) first))]
+  (-> 
+    (read)
+    fibo
+    println))
