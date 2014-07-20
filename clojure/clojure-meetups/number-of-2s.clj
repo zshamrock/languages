@@ -2,6 +2,7 @@
 
 (require '[clojure.test :refer [is]])
 
+; counts the number of '2' digits between 0 and n
 (defn number-of-2s [number]
   (let [all-tenth (loop [n (str number) cnt 0]
                     (if (seq n) 
