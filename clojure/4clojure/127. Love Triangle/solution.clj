@@ -6,18 +6,18 @@
 (require '[clojure.test :refer [is]])
 
 (defn mineral-area [rock]
-  (letfn [(to-binary [decimal]
+  (letfn [(binary-of [decimal]
             (loop [n decimal bits '()]
-              (if (<= n 1) (vec (conj bits n))
-                (recur (quot n 2) (conj bits (rem n 2)))
-                )
-              ) 
-            )]
-    (let [binary-rock (mapv to-binary rock)]
-      binary-rock 
-      )
-    )
-  )
+              (if (<= n 1) (conj bits n)
+                (recur (quot n 2) (conj bits (rem n 2))))))
+
+          (to-binary [rock]
+            (let [binary-rock-not-aligned (map binary-of rock)
+                  max-width (apply max (map count binary-rock-not-aligned))
+                  ]
+              (map #(concat (repeat (- max-width (count %)) 0) %) binary-rock-not-aligned)))]
+
+    (to-binary rock)))
 
 (defn- run-all-tests []
   (is (= 10 (mineral-area [15 15 15 15 15])))
