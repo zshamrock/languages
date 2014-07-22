@@ -6,7 +6,17 @@
 (require '[clojure.test :refer [is]])
 
 (defn mineral-area [rock]
-  nil
+  (letfn [(to-binary [decimal]
+            (loop [n decimal bits '()]
+              (if (<= n 1) (vec (conj bits n))
+                (recur (quot n 2) (conj bits (rem n 2)))
+                )
+              ) 
+            )]
+    (let [binary-rock (mapv to-binary rock)]
+      binary-rock 
+      )
+    )
   )
 
 (defn- run-all-tests []
