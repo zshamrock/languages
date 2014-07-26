@@ -12,23 +12,22 @@
     (loop [brackets []
            code c]
 
-      (if (seq code)
+      (let [ch (first code)]
+        (cond 
+          (not (seq code))
+          (empty? brackets)
 
-        (let [ch (first code)]
-          (cond 
-            (some #{ch} "[({") ; open bracket
-            (recur (conj brackets ch) (rest code))
+          (some #{ch} "[({") ; open bracket
+          (recur (conj brackets ch) (rest code))
 
-            (some #{ch} "])}") ; close bracket
-            (when (= (get brackets-mapping ch) (peek brackets))
-              (recur (pop brackets) (rest code))
-              )
+          (some #{ch} "])}") ; close bracket
+          (when (= (get brackets-mapping ch) (peek brackets))
+            (recur (pop brackets) (rest code))
+            )
 
-            :default
-            (recur brackets (rest code))
-            ))
-
-        (empty? brackets)))))
+          :default
+          (recur brackets (rest code))
+          )))))
 
 (defn- run-all-tests []
   (is (balanced? "This string has no brackets."))
