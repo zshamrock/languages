@@ -5,31 +5,14 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn computation-engine [ops]
+(defn computation-engine [expr]
   (fn [vars]    
-    (let [operators '[+ - * /]
-          actionable-operators {'+ + '- - '* * '/ /}]
-      (letfn [
-              (compute [ops]
-                (let [next-op (if (seq? ops) (first ops) ops)]
-                  (cond
-                    (seq? next-op)
-                    (cons (compute next-op) (compute (next ops)))
-
-                    (nil? next-op)
-                    []
-
-                    (some #{next-op} operators)
-                    (apply (actionable-operators next-op) (compute (next ops)))
-
-                    (number? next-op)
-                    (cons next-op (compute (next ops)))
-
-                    :default
-                    (cons (vars next-op) (compute (next ops)))
-                    )) 
-                )]
-        (compute ops)))))
+    (letfn [(compute [expr]
+              (if (list? expr)
+                (apply ({'+ + '- - '* * '/ /} (first expr)) (map compute (next expr)))
+                (vars expr expr)
+                ))]
+      (compute expr))))
 
 (defn- run-all-tests []
   (is (= 2 ((computation-engine '(/ a b))
