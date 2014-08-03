@@ -8,18 +8,8 @@
 (defn palindromic-numbers [len start-from]
   (letfn [(gen-palindrome [len start-from]
             (cond
-              (= len 1)
-              start-from
-
-              (= len 2)
-              (if (>= (mod start-from 10) (quot start-from 10))
-                (+ (* (inc (quot start-from 10)) 10) (inc (quot start-from 10)))
-                (+ (* (quot start-from 10) 10) (quot start-from 10))
-                )
+              ; TODO: think about better strategy to generate palindromes
               )
-
-              (= len 3)
-              ()
             
             )]
     (gen-palindrome len start-from)
