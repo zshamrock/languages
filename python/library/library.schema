@@ -1,0 +1,2 @@
+create table books(title text, author text, year unsigned integer, topic text);
+.import books.data books
