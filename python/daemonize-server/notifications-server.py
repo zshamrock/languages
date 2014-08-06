@@ -1,11 +1,21 @@
 import time
 
-from daemonize import Daemonize
+from daemon import runner
 
-def run():
-    while True:
-        time.sleep(5)
 
-daemon = Daemonize(app="notifications-server", pid="./notifications-server.pid", action=run)
-daemon.start()
+class App():
+    def __init__(self):
+        self.stdin_path = '/dev/null'
+        self.stdout_path = '/dev/tty'
+        self.stderr_path = '/dev/tty'
+        self.pidfile_path = '/var/run/notifications-server.pid'
+        self.pidfile_timeout = 5
+
+    def run(self):
+        while True:
+            time.sleep(5)
+
+app = App()
+daemon_runner = runner.DaemonRunner(app)
+daemon_runner.do_action()
 
