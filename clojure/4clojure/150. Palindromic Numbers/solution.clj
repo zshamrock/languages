@@ -5,16 +5,44 @@
 
 (require '[clojure.test :refer [is]])
 
-(defn palindromic-numbers [len start-from]
-  (letfn [(gen-palindrome [len start-from]
-            (cond
-              ; TODO: think about better strategy to generate palindromes
+(defn palindromic-numbers [n]
+
+  (letfn [(palindromic? [m]
+            (let [s (str m)]
+              (= (apply str (reverse s)) s))
+            )
+
+          (find-first-palindrome [n]
+            (first (filter palindromic? (iterate inc n)))  
+            )
+
+          (last-palindrome? [p]
+            (every? (fn is-nine? [d] (= \9 d)) (str p))
+            )
+
+          (first-palidrome-of-length [l]
+            (if (= l 2)
+              11
+              (Long/parseLong (str 1 (apply str (repeat (- l 2) 0)) 1))
               )
-            
-            )]
-    (gen-palindrome len start-from)
-    )  
+            )
+          ]
+    (let [next-palindrome (find-first-palindrome n)]
+      (is (last-palindrome? 9999))
+      (is (last-palindrome? 9))
+      (is (not (last-palindrome? 91)))
+      (is (= (first-palidrome-of-length 2) 11))
+      (is (= (first-palidrome-of-length 3) 101))
+      (is (= (first-palidrome-of-length 5) 10001))
+
+      next-palindrome
+      )
+    )
   )
+
+(palindromic-numbers 10)
+(palindromic-numbers 99999999)
+(palindromic-numbers 1234550000)
 
 (defn- run-all-tests []
   (is (= (take 26 (palindromic-numbers 0))
