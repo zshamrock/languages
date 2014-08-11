@@ -9,33 +9,46 @@
 
   (letfn [(palindromic? [m]
             (let [s (str m)]
-              (= (apply str (reverse s)) s))
-            )
+              (= (apply str (reverse s)) s)))
 
-          (find-first-palindrome [n]
-            (first (filter palindromic? (iterate inc n)))  
-            )
+          (find-next-palindrome-iterative [n]
+            (first (filter palindromic? (iterate inc n))))
 
           (last-palindrome? [p]
-            (every? (fn is-nine? [d] (= \9 d)) (str p))
-            )
+            (every? (fn is-nine? [d] (= \9 d)) (str p)))
 
           (first-palidrome-of-length [l]
-            (if (= l 2)
-              11
-              (Long/parseLong (str 1 (apply str (repeat (- l 2) 0)) 1))
-              )
-            )
-          ]
-    (let [next-palindrome (find-first-palindrome n)]
+            (Long/parseLong (str 1 (apply str (repeat (- l 2) 0)) 1)))
+
+          (generate-next-palindrome [p]
+            (if (last-palindrome? p)
+              (first-palidrome-of-length (-> p str count inc))
+              (let [palindrome-str (str p)
+                    palindrome-length (count palindrome-str)
+                    odd-palindrome? (odd? palindrome-length)
+                    i (quot palindrome-length 2)
+                    ith-digit (Long/parseLong (str (get palindrome-str i)))]
+                (if-not (= ith-digit 9)
+                  (if odd-palindrome?
+                    (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (subs palindrome-str (+ i 1))))
+                    (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (inc ith-digit) (subs palindrome-str (+ i 2)))))
+                  (let [j (first (filter (fn [index] (not= (get palindrome-str index) \9)) (range (+ i 1) palindrome-length)))
+                        k (dec (- palindrome-length j))
+                        j-digit (Long/parseLong (str (get palindrome-str j)))
+                        k-digit (Long/parseLong (str (get palindrome-str k)))]
+                    (assert (= j-digit k-digit))
+                    (Long/parseLong (str (subs palindrome-str 0 k) (inc k-digit) (subs palindrome-str (+ k 1) j) (inc j-digit) (subs palindrome-str (+ j 1)))))
+                  ))))]
+    (let [next-palindrome (find-next-palindrome-iterative n)]
       (is (last-palindrome? 9999))
       (is (last-palindrome? 9))
       (is (not (last-palindrome? 91)))
       (is (= (first-palidrome-of-length 2) 11))
       (is (= (first-palidrome-of-length 3) 101))
       (is (= (first-palidrome-of-length 5) 10001))
-
-      next-palindrome
+      
+      (def debug (atom 0))
+      (take 1 (iterate generate-next-palindrome next-palindrome))
       )
     )
   )
