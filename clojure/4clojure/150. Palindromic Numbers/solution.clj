@@ -29,31 +29,18 @@
                     i (quot palindrome-length 2)
                     ith-digit (Long/parseLong (str (get palindrome-str i)))]
                 (if-not (= ith-digit 9)
-                  (do
-                    (println "i" i)
-                    (println "ith-digit" ith-digit)
-                    (println "palindrome-str" palindrome-str)
-
-                   (comment (if odd-palindrome?
+                  (if odd-palindrome?
                     (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (subs palindrome-str (+ i 1))))
-                    (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (inc ith-digit) (subs palindrome-str (+ i 2)))))))
-                  (comment (let [j (first (filter (fn [index] (not= (get palindrome-str index) \9)) (range (+ i 1) palindrome-length)))
+                    (Long/parseLong (str (subs palindrome-str 0 (- i 1)) (inc ith-digit) (inc ith-digit) (subs palindrome-str (+ i 1)))))
+                  (let [j (first (filter (fn [index] (not= (get palindrome-str index) \9)) (range (+ i 1) palindrome-length)))
                         k (dec (- palindrome-length j))
                         j-digit (Long/parseLong (str (get palindrome-str j)))
                         k-digit (Long/parseLong (str (get palindrome-str k)))]
                     (assert (= j-digit k-digit))
-                    (Long/parseLong (str (subs palindrome-str 0 k) (inc k-digit) (subs palindrome-str (+ k 1) j) (inc j-digit) (subs palindrome-str (+ j 1))))))
+                    (Long/parseLong (str (subs palindrome-str 0 k) (inc k-digit) (apply str (repeat (- j k 1) "0")) (inc j-digit) (subs palindrome-str (+ j 1)))))
                   ))))]
     (let [next-palindrome (find-next-palindrome-iterative n)]
-      (is (last-palindrome? 9999))
-      (is (last-palindrome? 9))
-      (is (not (last-palindrome? 91)))
-      (is (= (first-palidrome-of-length 2) 11))
-      (is (= (first-palidrome-of-length 3) 101))
-      (is (= (first-palidrome-of-length 5) 10001))
-      
-      (def debug (atom 0))
-      (take 2 (iterate generate-next-palindrome next-palindrome))
+      (iterate generate-next-palindrome next-palindrome)
       )
     )
   )
@@ -82,7 +69,7 @@
          (* 111111111 111111111)))
 
   (is (= (set (take 199 (palindromic-numbers 0)))
-         (set (map #(first (__ %)) (range 0 10000)))))
+         (set (map #(first (palindromic-numbers %)) (range 0 10000)))))
 
   (is (= true 
          (apply < (take 6666 (palindromic-numbers 9999999)))))
