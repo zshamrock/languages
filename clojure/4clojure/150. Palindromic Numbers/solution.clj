@@ -11,6 +11,7 @@
             (let [s (str m)]
               (= (apply str (reverse s)) s)))
 
+          ; TODO: first palindrome lookup must be improved, otherwise one of the test fails on timeout, because it does 10000 iterative lookups
           (find-next-palindrome-iterative [n]
             (first (filter palindromic? (iterate inc n))))
 
@@ -78,4 +79,4 @@
          9102019))
   )
 
-(run-all-tests)
+(time (run-all-tests))
