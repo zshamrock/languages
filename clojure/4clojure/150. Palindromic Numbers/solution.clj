@@ -29,15 +29,20 @@
                     i (quot palindrome-length 2)
                     ith-digit (Long/parseLong (str (get palindrome-str i)))]
                 (if-not (= ith-digit 9)
-                  (if odd-palindrome?
+                  (do
+                    (println "i" i)
+                    (println "ith-digit" ith-digit)
+                    (println "palindrome-str" palindrome-str)
+
+                   (comment (if odd-palindrome?
                     (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (subs palindrome-str (+ i 1))))
-                    (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (inc ith-digit) (subs palindrome-str (+ i 2)))))
-                  (let [j (first (filter (fn [index] (not= (get palindrome-str index) \9)) (range (+ i 1) palindrome-length)))
+                    (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (inc ith-digit) (subs palindrome-str (+ i 2)))))))
+                  (comment (let [j (first (filter (fn [index] (not= (get palindrome-str index) \9)) (range (+ i 1) palindrome-length)))
                         k (dec (- palindrome-length j))
                         j-digit (Long/parseLong (str (get palindrome-str j)))
                         k-digit (Long/parseLong (str (get palindrome-str k)))]
                     (assert (= j-digit k-digit))
-                    (Long/parseLong (str (subs palindrome-str 0 k) (inc k-digit) (subs palindrome-str (+ k 1) j) (inc j-digit) (subs palindrome-str (+ j 1)))))
+                    (Long/parseLong (str (subs palindrome-str 0 k) (inc k-digit) (subs palindrome-str (+ k 1) j) (inc j-digit) (subs palindrome-str (+ j 1))))))
                   ))))]
     (let [next-palindrome (find-next-palindrome-iterative n)]
       (is (last-palindrome? 9999))
@@ -48,7 +53,7 @@
       (is (= (first-palidrome-of-length 5) 10001))
       
       (def debug (atom 0))
-      (take 1 (iterate generate-next-palindrome next-palindrome))
+      (take 2 (iterate generate-next-palindrome next-palindrome))
       )
     )
   )
