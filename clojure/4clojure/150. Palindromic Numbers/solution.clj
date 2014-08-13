@@ -12,7 +12,11 @@
               (= (apply str (reverse s)) s)))
 
           ; TODO: first palindrome lookup must be improved, otherwise one of the test fails on timeout, because it does 10000 iterative lookups
+          ; solution to implement is to mirror left part, if reversed greater than right part, or inc the last digit of left (middle in case of odd?) and 
+          ; to the right, if there is a 9, just increment the first possible digit, otherwise next length+1 palindrome
+          ; don't have time today for the actual implementation due to bad luck :(
           (find-next-palindrome-iterative [n]
+
             (first (filter palindromic? (iterate inc n))))
 
           (last-palindrome? [p]
@@ -49,6 +53,8 @@
 (palindromic-numbers 10)
 (palindromic-numbers 99999999)
 (palindromic-numbers 1234550000)
+
+(first (palindromic-numbers 57989))
 
 (defn- run-all-tests []
   (is (= (take 26 (palindromic-numbers 0))
