@@ -16,8 +16,30 @@
           ; to the right, if there is a 9, just increment the first possible digit, otherwise next length+1 palindrome
           ; don't have time today for the actual implementation due to bad luck :(
           (find-next-palindrome-iterative [n]
+                                          (if (last-palindrome? n)
+                                            (first-palidrome-of-length (-> n str count inc))
 
-            (first (filter palindromic? (iterate inc n))))
+                                            (let [n-str (str n)
+                                                  n-count (count n-str)
+                                                  middle-index (-> n-str count (quot 2))
+                                                  left-str (subs n-str 0 middle-index)
+                                                  reverse-left-str (reverse left-str)
+                                                  right-str (if (odd? (count n-str)) (subs n-str (+ middle-index 1)) (subs n-str middle-index))
+                                                  left (Long/parseLong left-str)
+                                                  reverse-left (Long/parseLong reverse-left-str)
+                                                  right (Long/parseLong right-str)]
+                                              (if (> reverse-left right)
+                                                (if (odd? n-count) 
+                                                  (str left-str (get n-str middle-index) reverse-left-str)
+                                                  (str left-str reverse-left-str))
+
+                                                (let [i (first (filter (fn [index] (not= (get n-str index) \9)) (range middle-index n-count)))]
+                                                  (if (odd? n-count)
+                                                    (subs )
+                                                    )
+                                                  )
+                                                ) 
+                                              )))
 
           (last-palindrome? [p]
             (every? (fn is-nine? [d] (= \9 d)) (str p)))
