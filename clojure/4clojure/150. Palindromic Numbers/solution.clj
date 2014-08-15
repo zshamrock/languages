@@ -7,11 +7,7 @@
 
 (defn palindromic-numbers [n]
 
-  (letfn [(palindromic? [m]
-            (let [s (str m)]
-              (= (apply str (reverse s)) s)))
-
-          (all-nines? [p]
+  (letfn [(all-nines? [p]
             (every? (fn nine? [d] (= \9 d)) (str p)))
 
           (first-palidrome-of-length [l]
@@ -21,46 +17,32 @@
           (generate-next-palindrome [n]
             (if (all-nines? n)
               (first-palidrome-of-length (-> n str count inc))
+              
               (let [n-str (str n)
                     n-length (count n-str)
                     odd-n? (odd? n-length)
                     mid-pos (quot n-length 2)
-                    mid-digit (Long/parseLong (str (get palindrome-str mid-pos)))
+                    mid-digit (Long/parseLong (str (get n-str mid-pos)))
                     left-str (subs n-str 0 mid-pos)
-                    reverse-left-str (reverse left-str)
-                    right-str (subs n-str (if odd-palindrome? (+ mid-pos 1) mid-pos))
+                    reverse-left-str (clojure.string/reverse left-str)
+                    right-str (subs n-str (if odd-n? (+ mid-pos 1) mid-pos))
                     left-num (Long/parseLong left-str)
                     reverse-left-num (Long/parseLong reverse-left-str)
                     right-num (Long/parseLong right-str)]
                 (if (> reverse-left-num right-num)
-                  (str left-str (if odd-n? mid-digit "") reverse-left-str)
+                  (Long/parseLong (str left-str (if odd-n? mid-digit "") reverse-left-str))
                   (if (all-nines? left-num)
                     (first-palidrome-of-length (-> left-str count (* 2) inc))
                     (let [range-start (if odd-n? mid-pos (- mid-pos 1))
                           i (first (filter (fn not-nine-at? [pos] (not= (get left-str pos) \9)) (range range-start -1 -1)))
                           ith-digit (Long/parseLong (get left-str i)) 
                           new-left-str (str (subs left-str 0 i) (inc ith-digit) (apply str (repeat (- range-start i) 0)))]
-                      (if (odd-n? ))
-                      
-                      )
-                    )
-                  )
-                (if-not (= ith-digit 9)
-                  (if odd-palindrome?
-                    (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (subs palindrome-str (+ i 1))))
-                    (Long/parseLong (str (subs palindrome-str 0 (- i 1)) (inc ith-digit) (inc ith-digit) (subs palindrome-str (+ i 1)))))
-                  (let [j (first (filter (fn [index] (not= (get palindrome-str index) \9)) (range (+ i 1) palindrome-length)))
-                        k (dec (- palindrome-length j))
-                        j-digit (Long/parseLong (str (get palindrome-str j)))
-                        k-digit (Long/parseLong (str (get palindrome-str k)))]
-                    (assert (= j-digit k-digit))
-                    (Long/parseLong (str (subs palindrome-str 0 k) (inc k-digit) (apply str (repeat (- j k 1) "0")) (inc j-digit) (subs palindrome-str (+ j 1)))))
-                  ))))]
-    (let [next-palindrome (find-next-palindrome-iterative n)]
-      (iterate generate-next-palindrome next-palindrome)
-      )
-    )
-  )
+                      (Long/parseLong
+                        (if odd-n?
+                          (apply str new-left-str (reverse (butlast new-left-str)))
+                          (str new-left-str (clojure.string/reverse new-left-str)))))))
+                )))]
+    (iterate generate-next-palindrome (generate-next-palindrome n))))
 
 (palindromic-numbers 10)
 (palindromic-numbers 99999999)
