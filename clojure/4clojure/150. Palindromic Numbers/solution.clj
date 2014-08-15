@@ -11,50 +11,40 @@
             (let [s (str m)]
               (= (apply str (reverse s)) s)))
 
-          ; TODO: first palindrome lookup must be improved, otherwise one of the test fails on timeout, because it does 10000 iterative lookups
-          ; solution to implement is to mirror left part, if reversed greater than right part, or inc the last digit of left (middle in case of odd?) and 
-          ; to the right, if there is a 9, just increment the first possible digit, otherwise next length+1 palindrome
-          ; don't have time today for the actual implementation due to bad luck :(
-          (find-next-palindrome-iterative [n]
-                                          (if (last-palindrome? n)
-                                            (first-palidrome-of-length (-> n str count inc))
-
-                                            (let [n-str (str n)
-                                                  n-count (count n-str)
-                                                  middle-index (-> n-str count (quot 2))
-                                                  left-str (subs n-str 0 middle-index)
-                                                  reverse-left-str (reverse left-str)
-                                                  right-str (if (odd? (count n-str)) (subs n-str (+ middle-index 1)) (subs n-str middle-index))
-                                                  left (Long/parseLong left-str)
-                                                  reverse-left (Long/parseLong reverse-left-str)
-                                                  right (Long/parseLong right-str)]
-                                              (if (> reverse-left right)
-                                                (if (odd? n-count) 
-                                                  (str left-str (get n-str middle-index) reverse-left-str)
-                                                  (str left-str reverse-left-str))
-
-                                                (let [i (first (filter (fn [index] (not= (get n-str index) \9)) (range middle-index n-count)))]
-                                                  (if (odd? n-count)
-                                                    (subs )
-                                                    )
-                                                  )
-                                                ) 
-                                              )))
-
-          (last-palindrome? [p]
-            (every? (fn is-nine? [d] (= \9 d)) (str p)))
+          (all-nines? [p]
+            (every? (fn nine? [d] (= \9 d)) (str p)))
 
           (first-palidrome-of-length [l]
             (Long/parseLong (str 1 (apply str (repeat (- l 2) 0)) 1)))
 
-          (generate-next-palindrome [p]
-            (if (last-palindrome? p)
-              (first-palidrome-of-length (-> p str count inc))
-              (let [palindrome-str (str p)
-                    palindrome-length (count palindrome-str)
-                    odd-palindrome? (odd? palindrome-length)
-                    i (quot palindrome-length 2)
-                    ith-digit (Long/parseLong (str (get palindrome-str i)))]
+          ; one solution which works the same way whether the input 'p' is a palindrome or not
+          (generate-next-palindrome [n]
+            (if (all-nines? n)
+              (first-palidrome-of-length (-> n str count inc))
+              (let [n-str (str n)
+                    n-length (count n-str)
+                    odd-n? (odd? n-length)
+                    mid-pos (quot n-length 2)
+                    mid-digit (Long/parseLong (str (get palindrome-str mid-pos)))
+                    left-str (subs n-str 0 mid-pos)
+                    reverse-left-str (reverse left-str)
+                    right-str (subs n-str (if odd-palindrome? (+ mid-pos 1) mid-pos))
+                    left-num (Long/parseLong left-str)
+                    reverse-left-num (Long/parseLong reverse-left-str)
+                    right-num (Long/parseLong right-str)]
+                (if (> reverse-left-num right-num)
+                  (str left-str (if odd-n? mid-digit "") reverse-left-str)
+                  (if (all-nines? left-num)
+                    (first-palidrome-of-length (-> left-str count (* 2) inc))
+                    (let [range-start (if odd-n? mid-pos (- mid-pos 1))
+                          i (first (filter (fn not-nine-at? [pos] (not= (get left-str pos) \9)) (range range-start -1 -1)))
+                          ith-digit (Long/parseLong (get left-str i)) 
+                          new-left-str (str (subs left-str 0 i) (inc ith-digit) (apply str (repeat (- range-start i) 0)))]
+                      (if (odd-n? ))
+                      
+                      )
+                    )
+                  )
                 (if-not (= ith-digit 9)
                   (if odd-palindrome?
                     (Long/parseLong (str (subs palindrome-str 0 i) (inc ith-digit) (subs palindrome-str (+ i 1))))
