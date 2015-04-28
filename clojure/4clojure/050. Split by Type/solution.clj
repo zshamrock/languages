@@ -5,6 +5,6 @@
 
 (require '[clojure.test :refer [is]])
 
-#(set (vals (group-by type %)))
+#(vals (group-by type %))
 
 (run-all-tests)
