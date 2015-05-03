@@ -28,3 +28,10 @@
 
 
 (run-all-tests)
+
+; this is nice solution
+(comment 
+  (fn  [& fs]
+    (let  [[lf & lfs]  (reverse fs)]
+      (fn  [& args]
+        (reduce #(%2 %1)  (apply lf args) lfs)))))
